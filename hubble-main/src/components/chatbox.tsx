@@ -22,8 +22,8 @@ function ChatBox() {
       <ChatTopBar />
       <div className="relative h-[84vh] overflow-y-scroll">
         <div className="inline-flex flex-col gap-5 bg-zinc-800 w-full py-5 px-10 ">
-          {AllChats.map((chat) => {
-            return <Chat from={chat.from as "sender" | "reciever"} />;
+          {AllChats.map((chat,index) => {
+            return <Chat from={chat.from as "sender" | "reciever"} key={index}/>;
           })}
         </div>
       </div>
