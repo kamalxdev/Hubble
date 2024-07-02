@@ -18,6 +18,16 @@ const registerSchema = z.object({
   password: z.string().min(6, { message: "Must be 6 or more characters long" }),
 });
 
+
+const loginSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(6, { message: "Must be 6 or more characters long" }),
+});
+
+
+
+
+
 export async function register(
   email: string,
   name: string,
@@ -65,5 +75,51 @@ export async function register(
     return { success: true, USER };
   } catch (error) {
     console.log("Error from Register User", error);
+  }
+}
+
+
+
+export async function login(
+  email:string,
+  password:string
+){
+  try {
+
+
+    // validating user data
+    const validateUserData = loginSchema.safeParse({
+      email,
+      password,
+    });
+    if (!validateUserData.success) {
+      const errorMessages = new Map();
+      (validateUserData?.error?.errors).map((e) => {
+        return errorMessages.set(e?.path[0], e.message);
+      });
+      return { success: false, error: errorMessages };
+    }
+
+
+    // check if user email exist 
+    const USER= await prisma.user.findFirst({
+      where:{
+        email
+      }
+    })
+    if(!USER){
+      return {success:false,error:"No user found with this email"}
+    }
+
+    
+    // checking user password 
+    const comparePassword= bcrypt.compareSync(password,USER.password);
+    if(!comparePassword){
+      return {success:false,error:"Incorrect Password"}
+    }
+    return {success:true,USER}
+  } catch (error) {
+    console.log("Error on Logging user",error);
+    
   }
 }
