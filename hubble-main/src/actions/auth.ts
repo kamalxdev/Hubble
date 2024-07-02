@@ -1,11 +1,15 @@
 "use server";
 
-import messages from "@/components/messages";
-import { PrismaClient } from "@prisma/client";
+
+import { PrismaClient } from '@prisma/client/edge'
+import { withAccelerate } from '@prisma/extension-accelerate'
+
+
+
 import bcrypt from "bcryptjs";
-import { error, log } from "console";
 import { z } from "zod";
-const prisma = new PrismaClient();
+
+const prisma = new PrismaClient().$extends(withAccelerate())
 
 const registerSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -40,7 +44,8 @@ export async function register(
     const UserwithSameUsername = await prisma.user.findFirst({
       where:{
         username
-      }
+      },
+      cacheStrategy: { ttl: 60 },
     })
     if (UserwithSameUsername) {
       return {success:false, error:"Username is present. Please choose unique username"}
@@ -54,8 +59,9 @@ export async function register(
         name,
         username,
         password: hashedPassword,
-      },
-    });
+      }
+    }
+  );
     return { success: true, USER };
   } catch (error) {
     console.log("Error from Register User", error);
