@@ -2,9 +2,10 @@
 import React, { memo, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { register } from "@/actions/auth";
-import { decodeFormState } from "next/dist/server/app-render/entry-base";
+import { useRouter } from 'next/navigation'
 
 function Register() {
+  const router = useRouter()
   const [data, setData] = useState({
     name: "",
     username: "",
@@ -12,12 +13,18 @@ function Register() {
     password: "",
   });
   const [error, setError] = useState<string |Map<any, any>>();
+  const [loading, setLoading]=useState(false)
+  const [success,setSuccess]=useState(false)
   function handleRegisterButton() {
+    setLoading(true)
     register(data.email, data.name, data.username, data.password).then(
       (data) => {
+        setSuccess(data?.success as boolean)
+        setLoading(false)
         if (!data?.success) {
-          setError(data?.error);
+          return setError(data?.error);
         }
+        return router.push('/login')
       }
     );
   }
@@ -40,6 +47,9 @@ function Register() {
             </a>
           </p>
           <form className="mt-8">
+          <p className="ml-3 text-green-500 transition text-sm font-bold w-full flex justify-center">
+                  {success?"Registered Successfully. Redirecting you to login page...":"" }
+                  </p>
             <div className="space-y-5">
               <div>
                 <label
@@ -134,9 +144,9 @@ function Register() {
                 <button
                   type="button"
                   onClick={handleRegisterButton}
-                  className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
+                  className={`inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 ${loading && "animate-pulse"}`}
                 >
-                  Get started <ArrowRight className="ml-2" size={16} />
+                  {loading?"Registering":"Get started"} <ArrowRight className="ml-2" size={16} />
                 </button>
               </div>
             </div>

@@ -3,13 +3,14 @@
 
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
-
-
+import { cookies } from 'next/headers'
+import jwt, { JwtPayload } from "jsonwebtoken"
 
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
 const prisma = new PrismaClient().$extends(withAccelerate())
+const SECRET = process.env.JWT_SECRET as string
 
 const registerSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -85,8 +86,7 @@ export async function login(
   password:string
 ){
   try {
-
-
+    
     // validating user data
     const validateUserData = loginSchema.safeParse({
       email,
@@ -105,7 +105,8 @@ export async function login(
     const USER= await prisma.user.findFirst({
       where:{
         email
-      }
+      },
+      cacheStrategy: { ttl: 60 },
     })
     if(!USER){
       return {success:false,error:"No user found with this email"}
@@ -117,9 +118,41 @@ export async function login(
     if(!comparePassword){
       return {success:false,error:"Incorrect Password"}
     }
+
+    // signing jwt  and creating token
+    const token = jwt.sign({email:USER.email,name:USER.name,username:USER.username},SECRET )
+    cookies().set("auth",token)
     return {success:true,USER}
   } catch (error) {
     console.log("Error on Logging user",error);
     
   }
+}
+
+
+interface iauthCokkieData extends JwtPayload{
+  username:string,
+  name:string,
+  email:string
+}
+
+
+export async function verifyUser(){
+  const authCookie=cookies().get("auth")
+  if(!authCookie || !authCookie?.value){
+    return {success:false,error:"No auth cookie found"}
+  }
+  const cookieDecodedData=jwt.verify(authCookie?.value,SECRET) as iauthCokkieData
+  // console.log({cookieDecodedData});
+  
+  if(!cookieDecodedData){
+    return {success:false,error:"JWT token signature is not valid"}
+  }
+  const USER = await prisma.user.findFirst({
+    where:{
+      username:cookieDecodedData?.username
+    },
+    cacheStrategy: { ttl: 60 },
+  })
+  return {success:true,USER}
 }

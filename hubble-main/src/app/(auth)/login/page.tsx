@@ -4,19 +4,28 @@
 import React, { memo, useState } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { login } from '@/actions/auth';
+import { useRouter } from 'next/navigation'
+
 
 function Login() {
+  const router = useRouter()
   const [data, setData] = useState({
     email: "",
     password: "",
   });
   const [error, setError] = useState<string |Map<any, any>>();
+  const [loading, setLoading]=useState(false)
+  const [success,setSuccess]=useState(false)
   function handleLoginButton() {
+    setLoading(true)
     login(data.email, data.password).then(
       (data) => {
+        setSuccess(data?.success as boolean)
+        setLoading(false)
         if (!data?.success) {
-          setError(data?.error);
+          return setError(data?.error);
         }
+        return router.push('/')
       }
     );
   }
@@ -41,6 +50,9 @@ function Login() {
           <form action="#" method="POST" className="mt-8">
           <p className="ml-3 text-red-500 transition text-sm font-bold w-full flex justify-center">
                   {typeof(error) === "string"?error:"" }
+                  </p>
+                  <p className="ml-3 text-green-500 transition text-sm font-bold w-full flex justify-center">
+                  {success?"Logged in Successfully. Redirecting you to home page...":"" }
                   </p>
             <div className="space-y-5">
               <div>
@@ -91,9 +103,9 @@ function Login() {
                 <button
                   type="button"
                   onClick={handleLoginButton}
-                  className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
+                  className= {`inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 ${loading && "animate-pulse"}`}
                 >
-                  Get started <ArrowRight className="ml-2" size={16} />
+                  {loading?"Logging in":"Get started"} <ArrowRight className="ml-2" size={16} />
                 </button>
               </div>
             </div>
