@@ -1,9 +1,11 @@
 'use client'
 
+import { currentUser, iCurrentUserContext } from "@/context/user"
+import { User as u } from "@prisma/client"                                                        
 import Image from "next/image"
 import Link from "next/link"
 import { Chat, Gear, Notepad, Phone, User } from "phosphor-react"
-import { memo } from "react"
+import { memo, useContext } from "react"
 
 
 type iprops={
@@ -12,6 +14,8 @@ type iprops={
 
 
 function Sidebar(props:iprops) {
+    const user= useContext(currentUser) as iCurrentUserContext;
+    
     const theme_class=(props?.theme)?(props.theme=="black"?"white":"black"):"black";
     const hover_btn_class=`before:hidden before:absolute before:-inset-2 before:bg-green-500 before:rounded-full relative hover:!text-white transition hover:before:block hover:before:animate-bounce text-${theme_class}`
     return (
@@ -19,7 +23,7 @@ function Sidebar(props:iprops) {
             <div className="flex justify-center pt-20">
                 {/* <Image src={'/vercel.svg'} width={100} height={100} alt="User_Profile_Photo"/> */}
                 <Link href={'/'} >
-                <span title="Your Account" className={`flex justify-center items-center border rounded-full border-${theme_class} p-1 text-${theme_class}`} > <User size={32} className="relative"/></span>
+                <span title={user.currentuser && user.currentuser?(user.currentuser?.name):"Your Account"} className={`flex justify-center items-center border rounded-full border-${theme_class} p-1 text-${theme_class}`} > <User size={32} className="relative"/></span>
                 </Link>
             </div>
             <div className=" flex flex-col gap-10 justify-center items-center">

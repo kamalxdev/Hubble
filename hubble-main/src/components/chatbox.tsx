@@ -1,38 +1,34 @@
+'use client'
+
+import { OpenChatContext, iOpenChatValue } from "@/context/OpenedChat";
+import { currentUser, iCurrentUserContext } from "@/context/user";
+import { socket } from "@/socket";
 import { EllipsisVertical, Phone, Send, User, Video } from "lucide-react";
 import Link from "next/link";
-import { memo } from "react";
+import { memo, useContext, useState } from "react";
+
 
 function ChatBox() {
-  const AllChats = [
-    { from: "sender" },
-    { from: "reciever" },
-    { from: "sender" },
-    { from: "reciever" },
-    { from: "sender" },
-    { from: "reciever" },
-    { from: "sender" },
-    { from: "reciever" },
-    { from: "sender" },
-    { from: "reciever" },
-    { from: "sender" },
-  ];
-
+  const openChat =useContext(OpenChatContext) as iOpenChatValue ;
+  if(!openChat.currentUniqueUserId){
+    return <div></div>
+  }
   return (
-    <section className="flex flex-col justify-between ">
-      <ChatTopBar />
+    <section className="flex flex-col justify-between transition">
+      <ChatTopBar name={openChat?.currentUserDetails?.name}/>
       <div className="relative h-[84vh] overflow-y-scroll">
-        <div className="inline-flex flex-col gap-5 bg-zinc-800 w-full py-5 px-10 ">
-          {AllChats.map((chat,index) => {
-            return <Chat from={chat.from as "sender" | "reciever"} key={index}/>;
+        <div className="inline-flex flex-col gap-5 bg-zinc-800 w-full py-5 px-10 h-full">
+          {openChat?.currentUserChats && (openChat?.currentUserChats).map((chat,index) => {
+            return <Chat from={chat.type as "sender" | "reciever"} key={index} message={chat.message}/>;
           })}
         </div>
       </div>
-      <MessageInput />
+      <MessageInput username={openChat?.currentUserDetails?.username}/>
     </section>
   );
 }
 
-const ChatTopBar = memo(function ChatTopBar() {
+const ChatTopBar = memo(function ChatTopBar({name}:{name:string}) {
   const topBarLeftStyling = "hover:bg-slate-300 transition p-3 rounded-md ";
   return (
     <div className="flex h-[8vh] w-full top-0 justify-between items-center bg-slate-200 px-10 py-2 text-black">
@@ -44,7 +40,7 @@ const ChatTopBar = memo(function ChatTopBar() {
           <User />
         </span>
         <span className="flex justify-center items-center gap-2">
-          <h1 className="text-xl">Virat Kholi</h1>
+          <h1 className="text-xl">{name}</h1>
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
@@ -66,15 +62,27 @@ const ChatTopBar = memo(function ChatTopBar() {
   );
 });
 
-const MessageInput = memo(function MessageInput() {
+const MessageInput = memo(function MessageInput({username}:{username:string}) {
+  const openChat =useContext(OpenChatContext) as iOpenChatValue ;
+  const user= useContext(currentUser) as iCurrentUserContext;
+  const [message,setMessage]=useState("")
+  function handleSendMessage(){
+    socket.emit('message-send',{message,to:username,from:user?.currentuser?.username})
+    // openChat.setCurrentUserChats([...openChat.currentUserChats,{type:"reciever",message}])
+    openChat.handleSetAllUserChats(openChat.currentUniqueUserId,{type:"reciever",message})
+    setMessage('')
+    
+  }
   return (
     <div className="flex relative bottom-0 justify-between text-black bg-slate-300 shadow-inner px-5 py-2 gap-5 h-[8vh]">
       <input
         type="text"
+        onChange={(e)=>setMessage(e.target.value)}
         className="bg-slate-200 outline-none w-full px-3 text-lg shadow shadow-inner px-5 py-2 text-xl rounded-md  "
         placeholder="Type your message..."
-      />{" "}
-      <button className="p-3 bg-green-500 text-white shadow hover:shadow-2xl transition rounded-md">
+        value={message}                                                     
+              />{" "}
+      <button onClick={handleSendMessage} className="p-3 bg-green-500 text-white shadow hover:shadow-2xl transition rounded-md">
         <Send size={20} />
       </button>
     </div>
@@ -84,6 +92,7 @@ const MessageInput = memo(function MessageInput() {
 
 type iChatProps = {
   from: "sender" | "reciever";
+  message:string
 };
 
 const Chat = memo(function Chat(props: iChatProps) {
@@ -96,8 +105,7 @@ const Chat = memo(function Chat(props: iChatProps) {
       }`}
     >
       <span className="p-2">
-        It is a long established fact that a reader will be distracted by the
-        readable content of a page when looking at its layout.
+        {props.message}
       </span>
       <span className="flex justify-end text-slate-600">09:54 pm</span>
     </div>

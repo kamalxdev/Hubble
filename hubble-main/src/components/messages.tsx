@@ -1,19 +1,37 @@
 "use client";
 import { OpenChatContext, iOpenChatValue } from "@/context/OpenedChat";
+import { currentUser, iCurrentUserContext } from "@/context/user";
+import { socket } from "@/socket";
+import { User as u } from "@prisma/client";
 import { Key, Search, User } from "lucide-react";
-import { memo, useContext } from "react";
+import { memo, useContext, useEffect } from "react";
 
 
 
 function Messages() {
+  const user= useContext(currentUser) as iCurrentUserContext;
+  // console.log("above socket",user);
+  
+  useEffect(()=>{
+    socket.on("connect", () => {
+      console.log("Socket conected: ",socket.id);
+      
+      socket.on("message-send",(data)=>{
+        console.log("messsage send",data);
+        
+      })
+      // socket.emit("message-send",{from:""})
+    });
+    if(user){
+      socket.emit("user-connected",{user:{username:user.currentuser.username},socketID:socket.id})
+    }
+  },[user])
+  // console.log("below socket",user);
+
+
   const openChat =useContext(OpenChatContext) as iOpenChatValue ;
 
-  const friends = [
-    {name:"Virat Kholi" ,UniqueUserID:"vkholi", key:1},
-    {name:"Rohit Sharma" ,UniqueUserID:"rohitsharma" , key:2},
-    {name:"Rishabh Pant" ,UniqueUserID:"pant" , key:3},
-    {name:"Suryakumar Yadav" ,UniqueUserID:"sky" , key:1},
-  ];
+  const friends = user.allUser
   return (
     <section className="" key={'message'}>
       {/* <div>{JSON.stringify(openChat)}</div> */}
@@ -24,7 +42,7 @@ function Messages() {
           {friends.map((friend,index) => {
             return (
               <>
-                <Friend name={friend.name} UniqueUserID={friend.UniqueUserID} key={friend.UniqueUserID}/>
+                <Friend name={friend.name} UniqueUserID={friend.username} key={friend.username}/>
                 <hr className="mx-10" key={index}/>
               </>
             );
