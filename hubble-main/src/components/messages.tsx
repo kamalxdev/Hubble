@@ -1,8 +1,6 @@
 "use client";
 import { OpenChatContext, iOpenChatValue } from "@/context/OpenedChat";
 import { currentUser, iCurrentUserContext } from "@/context/user";
-import { socket } from "@/socket";
-import { User as u } from "@prisma/client";
 import { Key, Search, User } from "lucide-react";
 import { memo, useContext, useEffect } from "react";
 
@@ -10,31 +8,9 @@ import { memo, useContext, useEffect } from "react";
 
 function Messages() {
   const user= useContext(currentUser) as iCurrentUserContext;
-  // console.log("above socket",user);
-  
-  useEffect(()=>{
-    socket.on("connect", () => {
-      console.log("Socket conected: ",socket.id);
-      
-      socket.on("message-send",(data)=>{
-        console.log("messsage send",data);
-        
-      })
-      // socket.emit("message-send",{from:""})
-    });
-    if(user){
-      socket.emit("user-connected",{user:{username:user.currentuser.username},socketID:socket.id})
-    }
-  },[user])
-  // console.log("below socket",user);
-
-
-  const openChat =useContext(OpenChatContext) as iOpenChatValue ;
-
   const friends = user.allUser
   return (
     <section className="" key={'message'}>
-      {/* <div>{JSON.stringify(openChat)}</div> */}
       <Searchbar />
       <div className="relative h-[90vh] overflow-y-scroll" key={"hell"}>
         <div className=" inline-flex flex-col justify-center w-full" key={"friends"}>

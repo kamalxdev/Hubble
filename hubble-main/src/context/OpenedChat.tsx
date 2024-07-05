@@ -7,12 +7,13 @@ type icurrentUserChats={
   type:string,
   message:string
 }
-export type iallUserChats=Map<string,icurrentUserChats[]>
+export type iallUserChats={[key:string]:icurrentUserChats[]}
+
 export type iOpenChatValue={
   currentUniqueUserId:string,
   setUniqueUserId: (x:string) => void
   currentUserDetails:User
-  handleSetAllUserChats: (x:string,y:icurrentUserChats) => void
+  setAllUserChats: (x:iallUserChats) => void
   allUserChats:iallUserChats
   currentUserChats:icurrentUserChats[]
 }
@@ -34,22 +35,26 @@ export function OpenChatProvider({ children }:{children:React.ReactNode}) {
         setCurrentUserDetails(data.user as User)
       }
     })
-
-    setCurrentUserChats(allUserChats?.get(currentUniqueUserId) as icurrentUserChats[])
-    
-
-
-
   },[currentUniqueUserId])
+  useEffect(()=>{
+    if(allUserChats && allUserChats[currentUniqueUserId]){
+      setCurrentUserChats((allUserChats as iallUserChats)[currentUniqueUserId] as icurrentUserChats[])
+    }else(
+      setCurrentUserChats([])
+    )
+    
+  },[allUserChats,currentUniqueUserId,currentUserChats])
 
-  function handleSetAllUserChats(username:string,data:icurrentUserChats){
-    let chats=allUserChats
-    let selectedUser=(chats as iallUserChats).get(username) as icurrentUserChats[]
-    chats?.set('',[...selectedUser,data])
-    setAllUserChats(chats)
-  }
+  // function handleSetAllUserChats(username:string,data:icurrentUserChats){
+  //   let chats=allUserChats
+  //   let selectedUser=(chats as iallUserChats)?.get(username) as icurrentUserChats[]
+  //   chats?.set(username,selectedUser?[...selectedUser,data]:[data])
+  //   setAllUserChats(chats)
+  //   console.log({allUserChats});
+    
+  // }
   return (
-    <OpenChatContext.Provider value={{ currentUniqueUserId, setUniqueUserId,currentUserDetails,allUserChats,handleSetAllUserChats ,currentUserChats}}>
+    <OpenChatContext.Provider value={{ currentUniqueUserId, setUniqueUserId,currentUserDetails,allUserChats,setAllUserChats ,currentUserChats}}>
       {children}
     </OpenChatContext.Provider>
   );
