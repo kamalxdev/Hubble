@@ -30,15 +30,27 @@ export function SocketContextProvider({
       });
       // socket.emit("message-send",{from:""})
     });
-    if (user) {
+    if (user.currentuser) {
       socket.emit("user-connected", {
         user: { username: user.currentuser.username },
         socketID: socket.id,
       });
     }
   }, [user]);
+
+  // checking if given user is online
+  useEffect(()=>{
+    socket.emit('user-online-request',{requestFor:openChat.currentUniqueUserId})
+  },[openChat.currentUniqueUserId]) 
+
+
+  socket.on('user-online-response',(data)=>{
+    if(data?.online && openChat.currentUniqueUserId==data?.username){
+      openChat.setCurrentUserOnline(true)
+    }
+  })
+  // recieving message
   socket.on("message-recieved", (data) => {
-      
     if (openChat?.allUserChats && openChat?.allUserChats[data?.from]) {
       openChat.setAllUserChats({
         ...openChat?.allUserChats,

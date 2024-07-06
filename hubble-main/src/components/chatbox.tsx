@@ -35,6 +35,8 @@ function ChatBox() {
 }
 
 const ChatTopBar = memo(function ChatTopBar({ name }: { name: string }) {
+  const openChat = useContext(OpenChatContext) as iOpenChatValue;
+
   const topBarLeftStyling = "hover:bg-slate-300 transition p-3 rounded-md ";
   return (
     <div className="flex h-[8vh] w-full top-0 justify-between items-center bg-slate-200 px-10 py-2 text-black">
@@ -47,10 +49,14 @@ const ChatTopBar = memo(function ChatTopBar({ name }: { name: string }) {
         </span>
         <span className="flex justify-center items-center gap-2">
           <h1 className="text-xl">{name}</h1>
-          <span className="relative flex h-2 w-2">
+         {
+          openChat?.currentUserOnline && (
+            <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
           </span>
+          )
+         }
         </span>
       </Link>
       <span className="flex border gap-2">
@@ -101,20 +107,6 @@ const MessageInput = memo(function MessageInput({
         [username]: [{ type: "reciever", message}],
       });
     }
-
-
-    // openChat.setAllUserChats({
-    //   ...openChat?.allUserChats,
-    //   [username]: openChat?.allUserChats?(
-    //     openChat?.allUserChats[username]
-    //   ? [...openChat?.allUserChats[username], { type: "reciever", message }]
-    //   : [{ type: "reciever", message }]
-    //   ):(
-    //     [{ type: "reciever", message }]
-    //   )
-    // });
-
-
 
     setMessage("");
   }

@@ -16,6 +16,8 @@ export type iOpenChatValue={
   setAllUserChats: (x:iallUserChats) => void
   allUserChats:iallUserChats
   currentUserChats:icurrentUserChats[]
+  currentUserOnline:boolean
+  setCurrentUserOnline:(x:boolean) => void
 }
 
 
@@ -29,12 +31,15 @@ export function OpenChatProvider({ children }:{children:React.ReactNode}) {
   const [currentUserDetails,setCurrentUserDetails]= useState<User|{}>({})
   const [allUserChats,setAllUserChats]=useState<iallUserChats>()
   const [currentUserChats,setCurrentUserChats]=useState<icurrentUserChats[]>()
+  const [currentUserOnline,setCurrentUserOnline]=useState<boolean>(false)
+
   useEffect(()=>{
     getUserDetails(currentUniqueUserId).then((data)=>{
       if(data.success){
         setCurrentUserDetails(data.user as User)
       }
     })
+    setCurrentUserOnline(false)
   },[currentUniqueUserId])
   useEffect(()=>{
     if(allUserChats && allUserChats[currentUniqueUserId]){
@@ -43,18 +48,10 @@ export function OpenChatProvider({ children }:{children:React.ReactNode}) {
       setCurrentUserChats([])
     )
     
-  },[allUserChats,currentUniqueUserId,currentUserChats])
+  },[allUserChats,currentUniqueUserId])
 
-  // function handleSetAllUserChats(username:string,data:icurrentUserChats){
-  //   let chats=allUserChats
-  //   let selectedUser=(chats as iallUserChats)?.get(username) as icurrentUserChats[]
-  //   chats?.set(username,selectedUser?[...selectedUser,data]:[data])
-  //   setAllUserChats(chats)
-  //   console.log({allUserChats});
-    
-  // }
   return (
-    <OpenChatContext.Provider value={{ currentUniqueUserId, setUniqueUserId,currentUserDetails,allUserChats,setAllUserChats ,currentUserChats}}>
+    <OpenChatContext.Provider value={{ currentUniqueUserId, setUniqueUserId,currentUserDetails,allUserChats,setAllUserChats ,currentUserChats,setCurrentUserOnline,currentUserOnline}}>
       {children}
     </OpenChatContext.Provider>
   );
