@@ -1,7 +1,7 @@
 
 
-import { Key, Search, User } from "lucide-react";
-import { memo, useContext, useEffect } from "react";
+import { Search, User } from "lucide-react";
+import { memo, useContext } from "react";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
 import { iUser } from "../types/user";

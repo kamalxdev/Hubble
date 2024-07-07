@@ -1,17 +1,16 @@
-
-import { memo, useState } from 'react'
-import { ArrowRight } from 'lucide-react'
-import usePostData from '../../hooks/axios/postData';
+import { memo, useState } from "react";
+import { ArrowRight } from "lucide-react";
+import usePostData from "../../hooks/axios/postData";
 
 function Login() {
-const [data, setData] = useState({
-  email: "",
-  password: "",
-});
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
 
-const loginUser=usePostData('/auth/login',data,'/',{
-  withCredentials:true
-})
+  const loginUser = usePostData("/auth/login", data, "/", {
+    withCredentials: true,
+  });
 
   return (
     <section>
@@ -21,7 +20,7 @@ const loginUser=usePostData('/auth/login',data,'/',{
             Log in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 ">
-            Don&apos;t have an account?{' '}
+            Don&apos;t have an account?{" "}
             <a
               href="/register"
               title=""
@@ -31,18 +30,26 @@ const loginUser=usePostData('/auth/login',data,'/',{
             </a>
           </p>
           <form action="#" method="POST" className="mt-8">
-          <p className="ml-3 text-red-500 transition text-sm font-bold w-full flex justify-center">
-                  {loginUser?.error?(typeof(loginUser?.error) === "string"?loginUser?.error:""):"" }
-
-                  </p>
-                  <p className="ml-3 text-green-500 transition text-sm font-bold w-full flex justify-center">
-                  {loginUser?.response?.success?"Logged in Successfully. Redirecting you to home page...":"" }
-                  </p>
+            <p className="ml-3 text-red-500 transition text-sm font-bold w-full flex justify-center">
+              {loginUser?.error
+                ? typeof loginUser?.error === "string"
+                  ? loginUser?.error
+                  : ""
+                : ""}
+            </p>
+            <p className="ml-3 text-green-500 transition text-sm font-bold w-full flex justify-center">
+              {loginUser?.response?.success
+                ? "Logged in Successfully. Redirecting you to home page..."
+                : ""}
+            </p>
             <div className="space-y-5">
               <div>
-                <label htmlFor="" className="text-base font-medium text-gray-900">
-                  {' '}
-                  Email address{' '}
+                <label
+                  htmlFor=""
+                  className="text-base font-medium text-gray-900"
+                >
+                  {" "}
+                  Email address{" "}
                 </label>
                 <div className="mt-2">
                   <input
@@ -54,19 +61,30 @@ const loginUser=usePostData('/auth/login',data,'/',{
                     placeholder="Email"
                   ></input>
                   <p className="ml-3 text-red-500 transition text-sm font-bold">
-                  {loginUser?.error?(typeof(loginUser?.error) === "string"?"":loginUser?.error["email"]):"" }
+                    {loginUser?.error
+                      ? typeof loginUser?.error === "string"
+                        ? ""
+                        : loginUser?.error["email"]
+                      : ""}
                   </p>
                 </div>
               </div>
               <div>
                 <div className="flex items-center justify-between">
-                  <label htmlFor="" className="text-base font-medium text-gray-900">
-                    {' '}
-                    Password{' '}
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    Password{" "}
                   </label>
-                  <a href="#" title="" className="text-sm font-semibold text-black hover:underline">
-                    {' '}
-                    Forgot password?{' '}
+                  <a
+                    href="#"
+                    title=""
+                    className="text-sm font-semibold text-black hover:underline"
+                  >
+                    {" "}
+                    Forgot password?{" "}
                   </a>
                 </div>
                 <div className="mt-2">
@@ -79,18 +97,24 @@ const loginUser=usePostData('/auth/login',data,'/',{
                     placeholder="Password"
                   ></input>
                   <p className="ml-3 text-red-500 transition text-sm font-bold">
-                  {loginUser?.error?(typeof(loginUser?.error) === "string"?"":loginUser?.error["password"]):"" }
-                  
+                    {loginUser?.error
+                      ? typeof loginUser?.error === "string"
+                        ? ""
+                        : loginUser?.error["password"]
+                      : ""}
                   </p>
                 </div>
               </div>
               <div>
                 <button
                   type="button"
-                  onClick={()=>loginUser.call()}
-                  className= {`inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 ${loginUser?.loading && "animate-pulse"}`}
+                  onClick={() => loginUser.call()}
+                  className={`inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 ${
+                    loginUser?.loading && "animate-pulse"
+                  }`}
                 >
-                  {loginUser?.loading?"Logging in":"Get started"} <ArrowRight className="ml-2" size={16} />
+                  {loginUser?.loading ? "Logging in" : "Get started"}{" "}
+                  <ArrowRight className="ml-2" size={16} />
                 </button>
               </div>
             </div>
@@ -98,9 +122,7 @@ const loginUser=usePostData('/auth/login',data,'/',{
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-
-
-export default memo(Login)
+export default memo(Login);

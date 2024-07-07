@@ -1,6 +1,6 @@
-
-import React, { memo, useState } from "react";
+import { memo, useState } from "react";
 import { ArrowRight } from "lucide-react";
+import usePostData from "../../hooks/axios/postData";
 
 function Register() {
   const [data, setData] = useState({
@@ -9,22 +9,9 @@ function Register() {
     email: "",
     password: "",
   });
-  const [error, setError] = useState<string |Map<any, any>>();
-  const [loading, setLoading]=useState(false)
-  const [success,setSuccess]=useState(false)
-  function handleRegisterButton() {
-    setLoading(true)
-    // register(data.email, data.name, data.username, data.password).then(
-    //   (data) => {
-    //     setSuccess(data?.success as boolean)
-    //     setLoading(false)
-    //     if (!data?.success) {
-    //       return setError(data?.error);
-    //     }
-    //     return router.push('/login')
-    //   }
-    // );
-  }
+  const registerUser = usePostData("/auth/register", data, "/", {
+    withCredentials: true,
+  });
 
   return (
     <section>
@@ -44,9 +31,18 @@ function Register() {
             </a>
           </p>
           <form className="mt-8">
-          <p className="ml-3 text-green-500 transition text-sm font-bold w-full flex justify-center">
-                  {success?"Registered Successfully. Redirecting you to login page...":"" }
-                  </p>
+            <p className="ml-3 text-green-500 transition text-sm font-bold w-full flex justify-center">
+              {registerUser?.response.success
+                ? "Registered Successfully. Redirecting you to login page..."
+                : ""}
+            </p>
+            <p className="ml-3 text-red-500 transition text-sm font-bold w-full flex justify-center">
+              {registerUser?.error
+                ? typeof registerUser?.error === "string"
+                  ? registerUser?.error
+                  : ""
+                : ""}
+            </p>
             <div className="space-y-5">
               <div>
                 <label
@@ -66,7 +62,11 @@ function Register() {
                     placeholder="Unique username"
                   ></input>
                   <p className="ml-3 text-red-500 transition text-sm font-bold">
-                    {typeof(error) === "string"?error:error?.get("username")}
+                  {registerUser?.error
+                      ? typeof registerUser?.error === "string"
+                        ? ""
+                        : registerUser?.error["username"]
+                      : ""}
                   </p>
                 </div>
               </div>
@@ -86,7 +86,11 @@ function Register() {
                     placeholder="Fullname"
                   ></input>
                   <p className="ml-3 text-red-500 transition text-sm font-bold">
-                  {typeof(error) === "string"?"":error?.get("name")}
+                  {registerUser?.error
+                      ? typeof registerUser?.error === "string"
+                        ? ""
+                        : registerUser?.error["name"]
+                      : ""}
                   </p>
                 </div>
               </div>
@@ -108,7 +112,11 @@ function Register() {
                     placeholder="Email"
                   ></input>
                   <p className="ml-3 text-red-500 transition text-sm font-bold">
-                  {typeof(error) === "string"?"":error?.get("email")}
+                  {registerUser?.error
+                      ? typeof registerUser?.error === "string"
+                        ? ""
+                        : registerUser?.error["email"]
+                      : ""}
                   </p>
                 </div>
               </div>
@@ -133,17 +141,24 @@ function Register() {
                     placeholder="Password"
                   ></input>
                   <p className="ml-3 text-red-500 transition text-sm font-bold">
-                  {typeof(error) === "string"?"":error?.get("password") }
+                  {registerUser?.error
+                      ? typeof registerUser?.error === "string"
+                        ? ""
+                        : registerUser?.error["password"]
+                      : ""}
                   </p>
                 </div>
               </div>
               <div>
                 <button
                   type="button"
-                  onClick={handleRegisterButton}
-                  className={`inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 ${loading && "animate-pulse"}`}
+                  onClick={() => registerUser.call()}
+                  className={`inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80 ${
+                    registerUser?.loading && "animate-pulse"
+                  }`}
                 >
-                  {loading?"Registering":"Get started"} <ArrowRight className="ml-2" size={16} />
+                  {registerUser?.loading ? "Registering" : "Get started"}{" "}
+                  <ArrowRight className="ml-2" size={16} />
                 </button>
               </div>
             </div>
@@ -154,4 +169,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default memo(Register);

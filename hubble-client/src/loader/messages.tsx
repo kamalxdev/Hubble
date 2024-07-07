@@ -15,11 +15,11 @@ function MessagesLoader() {
       <div className="relative h-[90vh] overflow-y-scroll" key={"hell"}>
         <div className=" inline-flex flex-col justify-center w-full" key={"friends"}>
           {/* <Friend /> */}
-          {friends.map((friend,index) => {
+          {friends.map(() => {
             return (
               <>
-                <FriendLoader key={index}/>
-                <hr className="mx-10" key={index}/>
+                <FriendLoader/>
+                <hr className="mx-10"/>
               </>
             );
           })}

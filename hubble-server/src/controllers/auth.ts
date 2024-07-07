@@ -89,7 +89,7 @@ export async function postRegister(req: Request, res: Response) {
       cacheStrategy: { ttl: 60 },
     })
     if (UserwithSameUsername) {
-      return res.json({success:false, error:"Username is there. Please choose unique username"})
+      return res.json({success:false, error:{username:"Username is there. Please choose unique username"}})
     }
     //
     // hashing password
