@@ -1,4 +1,4 @@
-import { EllipsisVertical, Phone, Send, User, Video } from "lucide-react";
+import { EllipsisVertical, Phone, Send, Video } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
 

@@ -1,4 +1,3 @@
-
 import { EllipsisVertical, Phone, Send, User, Video } from "lucide-react";
 import { memo, useContext, useState } from "react";
 import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
@@ -6,32 +5,63 @@ import { currentUser, iCurrentUserContext } from "../context/user";
 import { Link } from "react-router-dom";
 import { socketContext } from "../context/socket";
 import { Socket } from "socket.io-client";
-import ChatBoxLoader from '../loader/chatbox'
+import ChatBoxLoader from "../loader/chatbox";
 
 function ChatBox() {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
   if (!openChat.currentUniqueUserId) {
     return <div></div>;
   }
-  if(openChat?.loading){
-    return <ChatBoxLoader/>
+  if (openChat?.loading) {
+    return <ChatBoxLoader />;
   }
+  let currentDate: Date;
+
   return (
-    <section className="flex flex-col justify-between transition">
-      <ChatTopBar/>
-      <div className="relative h-[84vh] overflow-y-scroll bg-zinc-800">
-        <div className="inline-flex flex-col gap-5 bg-zinc-800 w-full py-5 px-10 ">
-          {openChat?.currentUserChats &&
-            (openChat?.currentUserChats).map((chat, index) => {
+    <section className="flex flex-col justify-between transition overflow-hidden ">
+      <ChatTopBar />
+      <div className="relative h-[84vh] overflow-hidden overflow-y-scroll bg-zinc-800 ">
+        <div className="inline-flex flex-col gap-5 bg-zinc-800 w-full py-5 px-10 overflow-hidden  ">
+          {openChat?.currentUserChats?.map((chat, index) => {
+            let chatDate = new Date(chat?.time);
+
+            if (!currentDate) {
+              currentDate = chatDate;
               return (
                 <Chat
                   from={chat.type as "sender" | "reciever"}
                   key={index}
                   message={chat.message}
-                  time={chat.time}
+                  time={chatDate}
+                  showDate
                 />
               );
-            })}
+            } else if (
+              currentDate?.getDate() != chatDate?.getDate() ||
+              currentDate?.getMonth() != chatDate?.getMonth() ||
+              currentDate?.getFullYear() != chatDate?.getFullYear()
+            ) {
+              currentDate = chatDate;
+              return (
+                <Chat
+                  from={chat.type as "sender" | "reciever"}
+                  key={index}
+                  message={chat.message}
+                  time={chatDate}
+                  showDate
+                />
+              );
+            } else {
+              return (
+                <Chat
+                  from={chat.type as "sender" | "reciever"}
+                  key={index}
+                  message={chat.message}
+                  time={chatDate}
+                />
+              );
+            }
+          })}
         </div>
       </div>
       <MessageInput username={openChat?.currentUserDetails?.username} />
@@ -54,14 +84,12 @@ const ChatTopBar = memo(function ChatTopBar() {
         </span>
         <span className="flex justify-center items-center gap-2">
           <h1 className="text-xl">{openChat.currentUserDetails?.name}</h1>
-         {
-          openChat?.currentUserOnline && (
+          {openChat?.currentUserOnline && (
             <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-          </span>
-          )
-         }
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+          )}
         </span>
       </Link>
       <span className="flex border gap-2">
@@ -86,33 +114,32 @@ const MessageInput = memo(function MessageInput({
 }) {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
   const user = useContext(currentUser) as iCurrentUserContext;
-  const socket=useContext(socketContext) as Socket;
+  const socket = useContext(socketContext) as Socket;
 
   const [message, setMessage] = useState("");
   function handleSendMessage() {
-    let time= new Date()
-    if(!message) return
+    let time = new Date();
+    if (!message) return;
 
     socket.emit("message-send", {
       message,
       to: username,
       from: user?.currentuser?.response?.user?.username,
-      time
+      time,
     });
-
 
     if (openChat?.allUserChats && openChat?.allUserChats[username]) {
       openChat.setAllUserChats({
         ...openChat?.allUserChats,
         [username]: [
           ...openChat?.allUserChats[username],
-          { type: "reciever", message,time},
+          { type: "reciever", message, time },
         ],
       });
     } else {
       openChat.setAllUserChats({
         ...openChat?.allUserChats,
-        [username]: [{ type: "reciever", message,time}],
+        [username]: [{ type: "reciever", message, time }],
       });
     }
 
@@ -140,21 +167,41 @@ const MessageInput = memo(function MessageInput({
 type iChatProps = {
   from: "sender" | "reciever";
   message: string;
-  time:Date
+  time: Date;
+  showDate?: boolean;
 };
 
 const Chat = memo(function Chat(props: iChatProps) {
+
   return (
-    <div
-      className={`inline-flex flex-col max-w-md md:max-w-xl p-2 rounded-md ${
-        props.from == "sender"
-          ? "text-white bg-slate-900"
-          : "text-black bg-white ml-auto"
-      }`}
-    >
-      <span className="p-2">{props.message}</span>
-      <span className="flex justify-end text-slate-600 text-xs">{props?.time?.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-    </div>
+    <>
+      {props.showDate && (
+        <div className="w-full flex justify-center">
+          <span className="text-white bg-black w-fit rounded-sm text-xs py-1 px-3 ">
+            {new Date(props?.time)?.toJSON().slice(0, 10).replace(/-/g, "/")}
+          </span>
+        </div>
+      )}
+      <div
+        className={`inline-flex flex-col w-fit max-w-md md:max-w-xl px-3 rounded-md ${
+          props.from == "sender"
+            ? "text-white bg-slate-900"
+            : "text-black bg-white ml-auto"
+        }`}
+      >
+        <span
+          className="text-xl/1 mt-2"
+          style={{ overflow: "hidden", wordBreak: "break-all" }}
+        >
+          {props.message}
+        </span>
+        <span className="inline-flex justify-end text-slate-600 text-xs ml-auto ">
+          {new Date(props?.time)
+            ?.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+            .toLowerCase()}
+        </span>
+      </div>
+    </>
   );
 });
 
