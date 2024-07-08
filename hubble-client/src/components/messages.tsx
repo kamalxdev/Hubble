@@ -75,10 +75,14 @@ const Friend = memo(function Friend(props:iFriendProps) {
           <h1>{props.name}</h1>
           <h3 className="text-slate-300 text-xs">@{props.UniqueUserID}</h3>
         </span>
-        <span className="flex justify-between text-slate-400 text-sm" key={"last_Chat_detail"}>
-          <p>Loreum ipsum sit itrem busdof dfds fhfisd kjl...</p>
+        <span className="flex justify-between items-end text-slate-400 text-sm" key={"last_Chat_detail"}>
+          <p>{openChat?.allUserChats && (openChat?.allUserChats[props.UniqueUserID])?(
+            openChat?.allUserChats[props.UniqueUserID][openChat?.allUserChats[props.UniqueUserID].length-1]?.message?.slice(0,30) + `${
+              openChat?.allUserChats[props.UniqueUserID][openChat?.allUserChats[props.UniqueUserID].length-1]?.message?.length > 30?"...":""
+            }`
+          ):("No message")}</p>
 
-          <p>02:45</p>
+          <p className="text-xs">{openChat?.allUserChats && (openChat?.allUserChats[props.UniqueUserID])?(openChat?.allUserChats[props.UniqueUserID][openChat?.allUserChats[props.UniqueUserID].length-1]?.time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})):""}</p>
         </span>
       </span>
     </button>

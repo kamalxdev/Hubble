@@ -51,13 +51,13 @@ export function SocketContextProvider({
         ...openChat?.allUserChats,
         [data?.from]: [
           ...openChat?.allUserChats[data?.from],
-          { type: "sender", message: data.message },
+          { type: "sender", message: data.message,time:data?.time },
         ],
       });
     } else {
       openChat.setAllUserChats({
         ...openChat?.allUserChats,
-        [data?.from]: [{ type: "sender", message: data.message }],
+        [data?.from]: [{ type: "sender", message: data.message,time:data?.time }],
       });
     }
   });

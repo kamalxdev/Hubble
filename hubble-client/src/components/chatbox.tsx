@@ -1,18 +1,20 @@
 
-// import { socket } from "@/socket";
 import { EllipsisVertical, Phone, Send, User, Video } from "lucide-react";
-// import Link from "next/link";
 import { memo, useContext, useState } from "react";
 import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import { Link } from "react-router-dom";
 import { socketContext } from "../context/socket";
 import { Socket } from "socket.io-client";
+import ChatBoxLoader from '../loader/chatbox'
 
 function ChatBox() {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
   if (!openChat.currentUniqueUserId) {
     return <div></div>;
+  }
+  if(openChat?.loading){
+    return <ChatBoxLoader/>
   }
   return (
     <section className="flex flex-col justify-between transition">
@@ -26,6 +28,7 @@ function ChatBox() {
                   from={chat.type as "sender" | "reciever"}
                   key={index}
                   message={chat.message}
+                  time={chat.time}
                 />
               );
             })}
@@ -87,12 +90,14 @@ const MessageInput = memo(function MessageInput({
 
   const [message, setMessage] = useState("");
   function handleSendMessage() {
+    let time= new Date()
     if(!message) return
 
     socket.emit("message-send", {
       message,
       to: username,
       from: user?.currentuser?.response?.user?.username,
+      time
     });
 
 
@@ -101,13 +106,13 @@ const MessageInput = memo(function MessageInput({
         ...openChat?.allUserChats,
         [username]: [
           ...openChat?.allUserChats[username],
-          { type: "reciever", message},
+          { type: "reciever", message,time},
         ],
       });
     } else {
       openChat.setAllUserChats({
         ...openChat?.allUserChats,
-        [username]: [{ type: "reciever", message}],
+        [username]: [{ type: "reciever", message,time}],
       });
     }
 
@@ -135,6 +140,7 @@ const MessageInput = memo(function MessageInput({
 type iChatProps = {
   from: "sender" | "reciever";
   message: string;
+  time:Date
 };
 
 const Chat = memo(function Chat(props: iChatProps) {
@@ -147,7 +153,7 @@ const Chat = memo(function Chat(props: iChatProps) {
       }`}
     >
       <span className="p-2">{props.message}</span>
-      <span className="flex justify-end text-slate-600">09:54 pm</span>
+      <span className="flex justify-end text-slate-600 text-xs">{props?.time?.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
     </div>
   );
 });

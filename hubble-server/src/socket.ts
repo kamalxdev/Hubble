@@ -44,7 +44,7 @@ export function socketHandler(
       // transferring message to the given user
       socket
         .to(usernameToSocket.get(data.to) as string)
-        .emit("message-recieved", { message: data.message, from: data.from });
+        .emit("message-recieved", { message: data?.message, from: data?.from ,time:data?.time});
     });
   });
 }
