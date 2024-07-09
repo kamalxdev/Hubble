@@ -38,7 +38,21 @@ export function SocketContextProvider({
     socket.emit('user-online-request',{requestFor:openChat.currentUniqueUserId})
   },[openChat.currentUniqueUserId]) 
 
-
+  // listening and handling user offline
+  socket.on('user-offline',(data)=>{
+    console.log("got user offline req: ",{data,user:openChat.currentUniqueUserId});
+    
+    if(data?.username && openChat.currentUniqueUserId==data?.username){
+      openChat.setCurrentUserOnline(false)
+    }
+  })
+  // listening to user online
+  socket.on('user-online',(data)=>{
+    if(data?.username && openChat.currentUniqueUserId==data?.username){
+      openChat.setCurrentUserOnline(true)
+    }
+  }) 
+  // giving online response
   socket.on('user-online-response',(data)=>{
     if(data?.online && openChat.currentUniqueUserId==data?.username){
       openChat.setCurrentUserOnline(true)

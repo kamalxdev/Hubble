@@ -16,13 +16,16 @@ export function socketHandler(
       console.log("user-connected: ", data);
       if (data?.username && socket.id) {
         usernameToSocket.set(data?.username, socket.id);
+        io.emit('user-online',{username:data?.username,online:true})
       }
       console.log({ usernameToSocket });
     });
     // handling disconnection: removing user from usernameToSocket map
     socket.on("disconnect", (reason) => {
+      
       usernameToSocket.forEach((value, key, map) => {
         if (value == socket.id) {
+          io.emit('user-offline',{username:key,online:false})
           usernameToSocket.delete(key);
         }
       });
