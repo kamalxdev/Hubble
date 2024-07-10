@@ -5,19 +5,19 @@ const prisma = new PrismaClient().$extends(withAccelerate());
 
 export async function getUser(req: Request, res: Response) {
   try {
-    const username = req?.query?.username as string;
-    if (!username) {
+    const id = req?.query?.id as string;
+    if (!id) {
       return res.json({ success: false, error: "username is required" });
     }
     const user = await prisma.user.findFirst({
       where: {
-        username,
+        id,
       },
     });
     if (!user) {
       return res.json({
         success: false,
-        error: `Cannot find user with @${username} username`,
+        error: `Cannot find user with @${id} username`,
       });
     }
     return res.json({ success: true, user });

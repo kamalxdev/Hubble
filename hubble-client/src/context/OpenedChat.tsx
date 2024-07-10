@@ -37,7 +37,7 @@ export function OpenChatProvider({ children }: { children: React.ReactNode }) {
   const [cookies] = useCookies();
 
   const getUser = useGetData(
-    `/user?username=${currentUniqueUserId}`,
+    `/user?id=${currentUniqueUserId}`,
     {
       headers: {
         authorization: cookies["auth"],

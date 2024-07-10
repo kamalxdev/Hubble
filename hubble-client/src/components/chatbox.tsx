@@ -4,7 +4,6 @@ import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import { Link } from "react-router-dom";
 import { socketContext } from "../context/socket";
-import { Socket } from "socket.io-client";
 import ChatBoxLoader from "../loader/chatbox";
 
 function ChatBox() {
@@ -64,7 +63,7 @@ function ChatBox() {
           })}
         </div>
       </div>
-      <MessageInput username={openChat?.currentUserDetails?.username} />
+      <MessageInput id={openChat?.currentUserDetails?.id} />
     </section>
   );
 }
@@ -108,38 +107,35 @@ const ChatTopBar = memo(function ChatTopBar() {
 });
 
 const MessageInput = memo(function MessageInput({
-  username,
+  id,
 }: {
-  username: string;
+  id: string;
 }) {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
   const user = useContext(currentUser) as iCurrentUserContext;
-  const socket = useContext(socketContext) as Socket;
+  const socket = useContext(socketContext) as WebSocket;
 
   const [message, setMessage] = useState("");
   function handleSendMessage() {
     let time = new Date();
     if (!message) return;
-
-    socket.emit("message-send", {
-      message,
-      to: username,
-      from: user?.currentuser?.response?.user?.username,
-      time,
-    });
-
-    if (openChat?.allUserChats && openChat?.allUserChats[username]) {
+    socket.send(JSON.stringify({event:"message-send",payload:{
+      to: id,
+      from: user?.currentuser?.response?.user?.id,
+      message,time
+    }}));
+    if (openChat?.allUserChats && openChat?.allUserChats[id]) {
       openChat.setAllUserChats({
         ...openChat?.allUserChats,
-        [username]: [
-          ...openChat?.allUserChats[username],
+        [id]: [
+          ...openChat?.allUserChats[id],
           { type: "reciever", message, time },
         ],
       });
     } else {
       openChat.setAllUserChats({
         ...openChat?.allUserChats,
-        [username]: [{ type: "reciever", message, time }],
+        [id]: [{ type: "reciever", message, time }],
       });
     }
 

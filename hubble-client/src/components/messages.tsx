@@ -28,8 +28,9 @@ function Messages() {
               <>
                 <Friend
                   name={friend.name}
-                  UniqueUserID={friend.username}
+                  UniqueUserID={friend.id}
                   key={friend.username}
+                  username={friend?.username}
                 />
                 <hr className="mx-10" key={index} />
               </>
@@ -63,6 +64,7 @@ const Searchbar = memo(function Searchbar() {
 type iFriendProps = {
   name: string;
   UniqueUserID: string;
+  username:string
 };
 
 const Friend = memo(function Friend(props: iFriendProps) {
@@ -85,7 +87,7 @@ const Friend = memo(function Friend(props: iFriendProps) {
       <span className="flex flex-col w-full" key={"user_details"}>
         <span className="flex justify-between">
           <h1>{props.name}</h1>
-          <h3 className="text-slate-300 text-xs">@{props.UniqueUserID}</h3>
+          <h3 className="text-slate-300 text-xs">@{props.username}</h3>
         </span>
         <span
           className="flex justify-between items-end text-slate-400 text-sm"
