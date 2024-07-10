@@ -1,6 +1,6 @@
-import { wss } from ".";
-import { onlineUser, socketIdtoDBuserID } from "./lib/user";
-import { iwebsocket } from "./ws";
+import { wss } from "../index";
+import { onlineUser, socketIdtoDBuserID } from "../lib/user";
+import {iwebsocket} from '../types/ws'
 import WebSocket from "ws";
 
 export function sendMessageToAll(data: any) {

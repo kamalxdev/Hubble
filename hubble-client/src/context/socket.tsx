@@ -4,7 +4,7 @@ import { OpenChatContext, iOpenChatValue } from "./OpenedChat";
 import { listenMessages } from "../utils/socketMessages";
 
 const socket = new WebSocket(
-  import.meta.env.VITE_WEBSOCKET_SERVER_URL as string
+  import.meta.env.VITE_SERVER_URL as string
 );
 
 export const socketContext = createContext<WebSocket>(socket);

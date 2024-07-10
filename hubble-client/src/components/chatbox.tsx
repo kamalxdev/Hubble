@@ -1,5 +1,5 @@
 import { EllipsisVertical, Phone, Send, User, Video } from "lucide-react";
-import { memo, useContext, useState } from "react";
+import { memo, useContext, useEffect, useRef, useState } from "react";
 import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import { Link } from "react-router-dom";
@@ -8,6 +8,13 @@ import ChatBoxLoader from "../loader/chatbox";
 
 function ChatBox() {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
+  const divref =useRef(null)
+  useEffect(()=>{
+    if(divref.current){
+      (divref?.current as HTMLElement)?.scrollIntoView({ behavior: 'smooth' })
+
+    }
+  })
   if (!openChat.currentUniqueUserId) {
     return <div></div>;
   }
@@ -62,6 +69,7 @@ function ChatBox() {
             }
           })}
         </div>
+        <div ref={divref}></div>
       </div>
       <MessageInput id={openChat?.currentUserDetails?.id} />
     </section>
@@ -106,24 +114,28 @@ const ChatTopBar = memo(function ChatTopBar() {
   );
 });
 
-const MessageInput = memo(function MessageInput({
-  id,
-}: {
-  id: string;
-}) {
+const MessageInput = memo(function MessageInput({ id }: { id: string }) {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
   const user = useContext(currentUser) as iCurrentUserContext;
   const socket = useContext(socketContext) as WebSocket;
+  useEffect(()=>{
 
+  })
   const [message, setMessage] = useState("");
   function handleSendMessage() {
     let time = new Date();
     if (!message) return;
-    socket.send(JSON.stringify({event:"message-send",payload:{
-      to: id,
-      from: user?.currentuser?.response?.user?.id,
-      message,time
-    }}));
+    socket.send(
+      JSON.stringify({
+        event: "message-send",
+        payload: {
+          to: id,
+          from: user?.currentuser?.response?.user?.id,
+          message,
+          time,
+        },
+      })
+    );
     if (openChat?.allUserChats && openChat?.allUserChats[id]) {
       openChat.setAllUserChats({
         ...openChat?.allUserChats,
@@ -146,6 +158,7 @@ const MessageInput = memo(function MessageInput({
       <input
         type="text"
         onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={(e)=> e.key=="Enter" && handleSendMessage()}
         className="bg-slate-200 outline-none w-full px-3 text-lg shadow shadow-inner px-5 py-2 text-xl rounded-md  "
         placeholder="Type your message..."
         value={message}
@@ -168,13 +181,15 @@ type iChatProps = {
 };
 
 const Chat = memo(function Chat(props: iChatProps) {
-
   return (
     <>
       {props.showDate && (
         <div className="w-full flex justify-center">
           <span className="text-white bg-black w-fit rounded-sm text-xs py-1 px-3 ">
-            {new Date(props?.time)?.toJSON().slice(0, 10).replace(/-/g, "/")}
+            {new Date()?.toJSON().slice(0, 10).replace(/-/g, "/") ==
+            new Date(props?.time)?.toJSON().slice(0, 10).replace(/-/g, "/")
+              ? "Today"
+              : new Date(props?.time)?.toJSON().slice(0, 10).replace(/-/g, "/")}
           </span>
         </div>
       )}
