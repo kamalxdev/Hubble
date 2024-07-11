@@ -26,6 +26,8 @@ app.use(cookieParser());
 // configuring routes
 app.use("/api/v1/auth", require("./routes/auth"));
 app.use("/api/v1/user", require("./routes/user"));
+app.use("/api/v1/chat", require("./routes/chat"));
+
 
 
 

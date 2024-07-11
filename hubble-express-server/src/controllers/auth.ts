@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client/edge";
+import { PrismaClient } from "@prisma/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
@@ -63,7 +63,7 @@ export async function postLogin(req: Request, res: Response) {
 export async function postRegister(req: Request, res: Response) {
  try {
     const body = req.body;
-
+    
     // validating data
     const validateBody = registerSchema.safeParse({
       email: body?.email,
@@ -100,8 +100,8 @@ export async function postRegister(req: Request, res: Response) {
     const USER = await prisma.user.create({
       data: {
         email:body?.email,
-        name:body?.email,
-        username:body?.email,
+        name:body?.name,
+        username:body?.username,
         password: hashedPassword,
       }
     })

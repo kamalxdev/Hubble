@@ -35,17 +35,25 @@ export function OpenChatProvider({ children }: { children: React.ReactNode }) {
   const [currentUserOnline, setCurrentUserOnline] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const [cookies] = useCookies();
-
+  const headerOptions={
+    headers: {
+      authorization: cookies["auth"],
+    },
+  }
+  const getChatsonDB = useGetData("/chat/all", headerOptions,true);
   const getUser = useGetData(
     `/user?id=${currentUniqueUserId}`,
-    {
-      headers: {
-        authorization: cookies["auth"],
-      },
-    },
+    headerOptions,
     true,
     [currentUniqueUserId]
   );
+  useEffect(()=>{
+    if (getChatsonDB?.response?.success && getChatsonDB?.response?.userchats) {
+      setAllUserChats(getChatsonDB?.response?.userchats)
+    }
+  },[getChatsonDB?.response?.userchats])       
+  console.log({allUserChats});
+  
   useEffect(() => {
     if (getUser?.response?.success) {
       setLoading(false);

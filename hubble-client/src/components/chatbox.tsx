@@ -118,9 +118,6 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
   const user = useContext(currentUser) as iCurrentUserContext;
   const socket = useContext(socketContext) as WebSocket;
-  useEffect(()=>{
-
-  })
   const [message, setMessage] = useState("");
   function handleSendMessage() {
     let time = new Date();
@@ -132,7 +129,7 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
           to: id,
           from: user?.currentuser?.response?.user?.id,
           message,
-          time,
+          time
         },
       })
     );

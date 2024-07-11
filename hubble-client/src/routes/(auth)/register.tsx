@@ -9,7 +9,7 @@ function Register() {
     email: "",
     password: "",
   });
-  const registerUser = usePostData("/auth/register", data, "/", {
+  const registerUser = usePostData("/auth/register", data, "/login", {
     withCredentials: true,
   });
 
@@ -32,7 +32,7 @@ function Register() {
           </p>
           <form className="mt-8">
             <p className="ml-3 text-green-500 transition text-sm font-bold w-full flex justify-center">
-              {registerUser?.response.success
+              {registerUser?.response?.success
                 ? "Registered Successfully. Redirecting you to login page..."
                 : ""}
             </p>
