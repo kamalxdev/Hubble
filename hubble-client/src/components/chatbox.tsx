@@ -8,13 +8,12 @@ import ChatBoxLoader from "../loader/chatbox";
 
 function ChatBox() {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
-  const divref =useRef(null)
-  useEffect(()=>{
-    if(divref.current){
-      (divref?.current as HTMLElement)?.scrollIntoView({ behavior: 'smooth' })
-
+  const divref = useRef(null);
+  useEffect(() => {
+    if (divref.current) {
+      (divref?.current as HTMLElement)?.scrollIntoView({ behavior: "smooth" });
     }
-  })
+  });
   if (!openChat.currentUniqueUserId) {
     return <div></div>;
   }
@@ -68,6 +67,12 @@ function ChatBox() {
               );
             }
           })}
+          {/* {openChat?.typing && openChat?.typing[openChat?.currentUniqueUserId] && <Chat
+                  from={"reciever"}
+                  key={"typing"}
+                  message={"typing..."}
+                  time={new Date()}
+                />} */}
         </div>
         <div ref={divref}></div>
       </div>
@@ -89,14 +94,22 @@ const ChatTopBar = memo(function ChatTopBar() {
         <span className="flex justify-center items-center border rounded-full border-black p-1 text-black">
           <User />
         </span>
-        <span className="flex justify-center items-center gap-2">
-          <h1 className="text-xl">{openChat.currentUserDetails?.name}</h1>
-          {openChat?.currentUserOnline && (
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-          )}
+        <span className="flex flex-col transition-all">
+          <span className="transition-all flex justify-center items-center gap-2">
+            <h1 className="text-xl">{openChat.currentUserDetails?.name}</h1>
+            {openChat?.currentUserOnline && (
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              </span>
+            )}
+          </span>
+          {openChat?.typing &&
+            openChat?.typing[openChat?.currentUniqueUserId] && (
+              <h6 className="text-xs text-green-500 font-semibold transition-all">
+                typing...
+              </h6>
+            )}
         </span>
       </Link>
       <span className="flex border gap-2">
@@ -129,7 +142,7 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
           to: id,
           from: user?.currentuser?.response?.user?.id,
           message,
-          time
+          time,
         },
       })
     );
@@ -155,8 +168,20 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
       <input
         type="text"
         onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={(e)=> e.key=="Enter" && handleSendMessage()}
-        className="bg-slate-200 outline-none w-full px-3 text-lg shadow shadow-inner px-5 py-2 text-xl rounded-md  "
+        onKeyDown={(e) =>
+          e.key == "Enter"
+            ? handleSendMessage()
+            : socket.send(
+                JSON.stringify({
+                  event: "message-send-start-typing",
+                  payload: {
+                    to: id,
+                    from: user?.currentuser?.response?.user?.id,
+                  },
+                })
+              )
+        }
+        className="bg-slate-200 outline-none w-full shadow-inner px-5 py-2 text-xl rounded-md  "
         placeholder="Type your message..."
         value={message}
       />{" "}

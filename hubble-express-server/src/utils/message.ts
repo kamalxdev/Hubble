@@ -163,6 +163,8 @@ export function message(data: { event: string; payload: any }, ws: iwebsocket) {
           );
         }
         break;
+        // listen to user message and redirect it to 'to user' 
+      
       case "message-send":
         console.log("message-send", JSON.stringify(data), ws.id);
         if (
@@ -193,6 +195,18 @@ export function message(data: { event: string; payload: any }, ws: iwebsocket) {
           });
         }
         break;
+        //
+        case 'message-send-start-typing':
+          if(data?.payload?.to && data?.payload?.from){
+            socketIdtoDBuserID.forEach((value, key, map) => {
+              if (value == data?.payload?.to) {
+                sendMessageToSpecific({
+                  event: "message-recieved-start-typing",
+                  payload: { id: data?.payload?.from },
+                },key)
+              }})
+          }
+          break;
       default:
         console.log("No event found");
 

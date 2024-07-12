@@ -1,5 +1,4 @@
-// import { getUserDetails } from "@/actions/user";
-// import { User } from "@prisma/client";
+
 import { createContext, useEffect, useState } from "react";
 import { iUser } from "../types/user";
 import useGetData from "../hooks/axios/getData";
@@ -11,6 +10,8 @@ type icurrentUserChats = {
   time: Date;
 };
 export type iallUserChats = { [key: string]: icurrentUserChats[] };
+export type ityping = { [key: string]: boolean };
+
 
 export type iOpenChatValue = {
   currentUniqueUserId: string;
@@ -22,6 +23,8 @@ export type iOpenChatValue = {
   currentUserOnline: boolean;
   setCurrentUserOnline: (x: boolean) => void;
   loading: boolean;
+  setTyping:(x:ityping)=>void,
+  typing:ityping
 };
 
 export const OpenChatContext = createContext<iOpenChatValue | {}>({});
@@ -30,6 +33,7 @@ export function OpenChatProvider({ children }: { children: React.ReactNode }) {
   const [currentUniqueUserId, setUniqueUserId] = useState("");
   const [currentUserDetails, setCurrentUserDetails] = useState<iUser | {}>({});
   const [allUserChats, setAllUserChats] = useState<iallUserChats>();
+  const [typing,setTyping]=useState<ityping>()
   const [currentUserChats, setCurrentUserChats] =
     useState<icurrentUserChats[]>();
   const [currentUserOnline, setCurrentUserOnline] = useState<boolean>(false);
@@ -52,7 +56,6 @@ export function OpenChatProvider({ children }: { children: React.ReactNode }) {
       setAllUserChats(getChatsonDB?.response?.userchats)
     }
   },[getChatsonDB?.response?.userchats])       
-  console.log({allUserChats});
   
   useEffect(() => {
     if (getUser?.response?.success) {
@@ -88,6 +91,8 @@ export function OpenChatProvider({ children }: { children: React.ReactNode }) {
         setCurrentUserOnline,
         currentUserOnline,
         loading,
+        setTyping,
+        typing
       }}
     >
       {children}

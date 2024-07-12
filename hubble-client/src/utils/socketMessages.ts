@@ -34,10 +34,12 @@ export function listenMessages(
           openChat.currentUniqueUserId == data?.payload?.id
         ) {
           console.log("user online resopnse");
-          
+
           openChat.setCurrentUserOnline(true);
         }
         break;
+      //
+      // listen to user message and set it in alluser chats
       case "message-recieved":
         if (
           openChat?.allUserChats &&
@@ -67,14 +69,29 @@ export function listenMessages(
           });
         }
         break;
-
+      //
+      case "message-recieved-start-typing":
+        if (data?.payload?.id) {
+          if(openChat.typing){
+            openChat.setTyping({...openChat?.typing,[data?.payload?.id]:true})
+            setTimeout(()=>{
+            openChat.setTyping({...openChat?.typing,[data?.payload?.id]:false})
+              
+              },2500)
+          }else{
+            openChat.setTyping({[data?.payload?.id]:true})
+            setTimeout(()=>{
+            openChat.setTyping({[data?.payload?.id]:false})
+            },2500)
+          }
+        }
+        break;
       default:
         console.log("no event found");
 
         break;
     }
-  }else{
+  } else {
     console.log("no event found");
-    
   }
 }

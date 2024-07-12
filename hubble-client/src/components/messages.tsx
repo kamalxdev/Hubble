@@ -64,7 +64,7 @@ const Searchbar = memo(function Searchbar() {
 type iFriendProps = {
   name: string;
   UniqueUserID: string;
-  username:string
+  username: string;
 };
 
 const Friend = memo(function Friend(props: iFriendProps) {
@@ -93,33 +93,46 @@ const Friend = memo(function Friend(props: iFriendProps) {
           className="flex justify-between items-end text-slate-400 text-sm"
           key={"last_Chat_detail"}
         >
-          <p>
-            {openChat?.allUserChats &&
-            openChat?.allUserChats[props.UniqueUserID]
-              ? openChat?.allUserChats[props.UniqueUserID][
-                  openChat?.allUserChats[props.UniqueUserID]?.length - 1
-                ]?.message?.slice(0, 30) +
-                `${
-                  openChat?.allUserChats[props.UniqueUserID][
-                    openChat?.allUserChats[props.UniqueUserID]?.length - 1
-                  ]?.message?.length > 30
-                    ? "..."
-                    : ""
-                }`
-              : "No message"}
-          </p>
+          {openChat?.typing &&
+          openChat?.typing[props.UniqueUserID] ? (
+            <h6 className="text-xs text-green-500 font-semibold transition-all">
+              typing...
+            </h6>
+          ) : (
+            <>
+              <p>
+                {openChat?.allUserChats &&
+                openChat?.allUserChats[props.UniqueUserID]
+                  ? openChat?.allUserChats[props.UniqueUserID][
+                      openChat?.allUserChats[props.UniqueUserID]?.length - 1
+                    ]?.message?.slice(0, 30) +
+                    `${
+                      openChat?.allUserChats[props.UniqueUserID][
+                        openChat?.allUserChats[props.UniqueUserID]?.length - 1
+                      ]?.message?.length > 30
+                        ? "..."
+                        : ""
+                    }`
+                  : "No message"}
+              </p>
 
-          <p className="text-xs">
-          {openChat?.allUserChats &&
-            openChat?.allUserChats[props.UniqueUserID]
-              ? new Date(openChat?.allUserChats[props.UniqueUserID][
-                openChat?.allUserChats[props.UniqueUserID]?.length - 1
-              ].time).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }).toLowerCase()
-              : ""}
-          </p>
+              <p className="text-xs">
+                {openChat?.allUserChats &&
+                openChat?.allUserChats[props.UniqueUserID]
+                  ? new Date(
+                      openChat?.allUserChats[props.UniqueUserID][
+                        openChat?.allUserChats[props.UniqueUserID]?.length - 1
+                      ].time
+                    )
+                      .toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                      .toLowerCase()
+                  : ""}
+              </p>
+            </>
+          )}
         </span>
       </span>
     </button>
