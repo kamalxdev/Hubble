@@ -5,15 +5,38 @@ import { currentUser, iCurrentUserContext } from "../context/user";
 import { Link } from "react-router-dom";
 import { socketContext } from "../context/socket";
 import ChatBoxLoader from "../loader/chatbox";
+import { iwebRTCcontext, webRTCcontext } from "../context/webRTC";
 
 function ChatBox() {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
+  const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
   const divref = useRef(null);
+  const videoRef = useRef(null);
+  const videoRefReciever = useRef(null);
+
   useEffect(() => {
     if (divref.current) {
       (divref?.current as HTMLElement)?.scrollIntoView({ behavior: "smooth" });
     }
+    if (videoRef?.current) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          // @ts-ignore
+          videoRef.current.srcObject = stream;
+        });
+    }
+    if (webRTC?.peer?.reciever && videoRefReciever?.current) {
+      webRTC.peer.reciever.ontrack = (event) => {
+        // @ts-ignore
+
+        videoRefReciever.current.srcObject = new MediaStream([event.track]);
+      };
+    }
   });
+  // useEffect(()=>{
+
+  // })
   if (!openChat.currentUniqueUserId) {
     return <div></div>;
   }
@@ -21,12 +44,14 @@ function ChatBox() {
     return <ChatBoxLoader />;
   }
   let currentDate: Date;
-
   return (
     <section className="flex flex-col justify-between transition overflow-hidden ">
       <ChatTopBar />
       <div className="relative h-[84vh] overflow-hidden overflow-y-scroll bg-zinc-800 ">
         <div className="inline-flex flex-col gap-5 bg-zinc-800 w-full py-5 px-10 overflow-hidden  ">
+          <video ref={videoRef} autoPlay width={200} controls></video>
+          <video ref={videoRefReciever} autoPlay width={200} controls></video>
+
           {openChat?.currentUserChats?.map((chat, index) => {
             let chatDate = new Date(chat?.time);
 
@@ -67,12 +92,6 @@ function ChatBox() {
               );
             }
           })}
-          {/* {openChat?.typing && openChat?.typing[openChat?.currentUniqueUserId] && <Chat
-                  from={"reciever"}
-                  key={"typing"}
-                  message={"typing..."}
-                  time={new Date()}
-                />} */}
         </div>
         <div ref={divref}></div>
       </div>
@@ -83,7 +102,76 @@ function ChatBox() {
 
 const ChatTopBar = memo(function ChatTopBar() {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
+  const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
+  const socket = useContext(socketContext) as WebSocket;
 
+  async function handleCreateCall(type: string) {
+    let media = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
+    if (!media) return console.log("no access to user media");
+
+    // webRTC?.setPeer({
+    //   sender: new RTCPeerConnection(),
+    //   reciever: new RTCPeerConnection(),
+    // });
+    // let offer = await webRTC?.peer?.sender?.createOffer();
+    // await webRTC?.peer?.sender?.setLocalDescription(offer);
+    webRTC?.setCall({
+      user: { id: openChat.currentUniqueUserId },
+      type,
+      answered: false,
+    });
+    // socket.send(
+    //   JSON.stringify({
+    //     event: "call-offer",
+    //     payload: {
+    //       id: openChat?.currentUniqueUserId,
+    //       type,
+    //       senderOFFER: webRTC?.peer?.sender?.localDescription,
+    //     },
+    //   })
+    // );
+    navigator.mediaDevices
+            .getUserMedia({ video: true, audio: true })
+            .then((stream) => {
+              stream.getTracks().forEach((track) => {
+                webRTC?.peer?.sender?.addTrack(track);
+              });
+            });
+    // if(webRTC?.peer?.sender){
+    //   console.log("inside if");
+      
+    //   webRTC.peer.sender.onicecandidate = (event) => {
+    //     if (event.candidate) {
+    //       socket?.send(
+    //         JSON.stringify({
+    //           event: "call-user-iceCandidate",
+    //           payload: {
+    //             id: webRTC?.call?.user?.id,
+    //             iceCandidate: event?.candidate,
+    //           },
+    //         })
+    //       );
+    //     }
+    //   };
+    //   webRTC.peer.sender.onnegotiationneeded = async () => {
+    //     let offer = await webRTC?.peer?.sender?.createOffer();
+    //     await webRTC?.peer?.sender?.setLocalDescription(offer);
+    //     socket.send(
+    //       JSON.stringify({
+    //         event: "call-offer",
+    //         payload: {
+    //           id: openChat?.currentUniqueUserId,
+    //           type,
+    //           senderOFFER: webRTC?.peer?.sender?.localDescription,
+    //         },
+    //       })
+    //     );
+    //   };
+    // }
+  }
   const topBarLeftStyling = "hover:bg-slate-300 transition p-3 rounded-md ";
   return (
     <div className="flex h-[8vh] w-full top-0 justify-between items-center bg-slate-200 px-10 py-2 text-black">
@@ -113,10 +201,18 @@ const ChatTopBar = memo(function ChatTopBar() {
         </span>
       </Link>
       <span className="flex border gap-2">
-        <button type="button" className={topBarLeftStyling}>
+        <button
+          type="button"
+          onClick={() => handleCreateCall("voice")}
+          className={topBarLeftStyling}
+        >
           <Phone size={20} />
         </button>
-        <button type="button" className={topBarLeftStyling}>
+        <button
+          type="button"
+          onClick={() => handleCreateCall("video")}
+          className={topBarLeftStyling}
+        >
           <Video size={20} />
         </button>
         <button type="button" className={topBarLeftStyling}>
@@ -167,6 +263,9 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
     <div className="flex relative bottom-0 justify-between text-black bg-slate-300 shadow-inner px-5 py-2 gap-5 h-[8vh]">
       <input
         type="text"
+        autoFocus
+        autoCorrect="on"
+        // autoComplete="on"
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={(e) =>
           e.key == "Enter"

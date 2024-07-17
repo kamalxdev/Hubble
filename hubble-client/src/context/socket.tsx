@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect } from "react";
 import { currentUser, iCurrentUserContext } from "./user";
 import { OpenChatContext, iOpenChatValue } from "./OpenedChat";
 import { listenMessages } from "../utils/socketMessages";
+import { iwebRTCcontext, webRTCcontext } from "./webRTC";
 
 const socket = new WebSocket(
   import.meta.env.VITE_SERVER_URL as string
@@ -16,6 +17,7 @@ export function SocketContextProvider({
 }) {
   const user = useContext(currentUser) as iCurrentUserContext;
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
+  const webRTC = useContext(webRTCcontext) as iwebRTCcontext
   socket.onopen = () => {
     console.log("Connection established");
   };
@@ -43,8 +45,13 @@ export function SocketContextProvider({
     //
   }, [openChat.currentUniqueUserId]);
   socket.onmessage = (message) => {
-    console.log("Message received:", message.data);
-    listenMessages(openChat,JSON.parse(message.data))
+    try {
+      console.log("Message received:", message.data);
+    listenMessages(openChat,socket,webRTC,JSON.parse(message.data))
+    } catch (error) {
+      console.log("error on listening events");
+      
+    }
   };
   return (
     <socketContext.Provider value={socket}>{children}</socketContext.Provider>
