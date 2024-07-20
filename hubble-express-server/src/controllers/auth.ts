@@ -50,8 +50,9 @@ export async function postLogin(req: Request, res: Response) {
       { email: USER.email, name: USER.name, username: USER.username },
       SECRET
     );
+    // , { httpOnly: process.env.COOKIE_HTTPONLY=='true'?true:false,sameSite:'none',secure:false}
     return res
-      .cookie("auth", token, { httpOnly: process.env.COOKIE_HTTPONLY=='true'?true:false,sameSite:'none', secure: true})
+      .cookie("auth", token)
       .json({ success: true, USER });
     //
   } catch (error) {

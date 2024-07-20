@@ -26,12 +26,12 @@ export function CurrentUserProvider({ children }:{children:React.ReactNode}){
     }
     const cUser=useGetData(`/user/verify`,authorizationHeader,true);
     const aUser=useGetData('/user/bulk',authorizationHeader,true);
-    useEffect(()=>{
-        if(cUser.response && !cUser?.response?.success){
-            console.log({cUser});
-            window.location.href='/login'
-        }
-    },[cUser])
+    // useEffect(()=>{
+    //     if(cUser.response && !cUser?.response?.success){
+    //         console.log({cUser});
+    //         window.location.href='/login'
+    //     }
+    // },[cUser])
 
     
     return <currentUser.Provider value={{currentuser:cUser,allUser:aUser}}>

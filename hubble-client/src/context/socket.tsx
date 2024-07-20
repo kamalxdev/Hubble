@@ -32,16 +32,18 @@ export function SocketContextProvider({
       );
     }
     //
-  }, [user.currentuser]);
+  }, [user?.currentuser?.response?.user]);
   useEffect(() => {
     // socket.send(JSON.stringify({event:"",payload:{}}))
     // checking if given user is online
-    socket.send(
-      JSON.stringify({
-        event: "user-online-request",
-        payload: { id: openChat.currentUniqueUserId },
-      })
-    );
+    if(openChat?.currentUniqueUserId){
+      socket.send(
+        JSON.stringify({
+          event: "user-online-request",
+          payload: { id: openChat.currentUniqueUserId },
+        })
+      );
+    }
     //
   }, [openChat.currentUniqueUserId]);
   socket.onmessage = (message) => {

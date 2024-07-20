@@ -1,5 +1,5 @@
 import { Search, User } from "lucide-react";
-import { memo, useContext } from "react";
+import { Fragment, memo, useContext } from "react";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
 import { iUser } from "../types/user";
@@ -22,10 +22,9 @@ function Messages() {
           className=" inline-flex flex-col justify-center w-full"
           key={"friends"}
         >
-          {/* <Friend /> */}
           {friends.map((friend, index) => {
             return (
-              <>
+              <Fragment key={friend.id}>
                 <Friend
                   name={friend.name}
                   UniqueUserID={friend.id}
@@ -33,7 +32,7 @@ function Messages() {
                   username={friend?.username}
                 />
                 <hr className="mx-10" key={index} />
-              </>
+              </Fragment>
             );
           })}
         </div>
@@ -44,16 +43,16 @@ function Messages() {
 
 const Searchbar = memo(function Searchbar() {
   return (
-    <div className="flex justify-center w-full bg-white py-5 z-10 h-[10vh]">
-      <div className="inline-flex items-center gap-2 px-3 py-2 bg-slate-100 rounded-sm">
+    <div className="flex justify-center w-full bg-white p-6 z-10 h-[10vh]">
+      <div className="inline-flex items-center gap-2 px-3 bg-slate-100 ounded-md w-full">
         <span>
           <Search size={16} />
         </span>
-        <span>
+        <span className="w-full">
           <input
             type="search"
-            placeholder="Search"
-            className="bg-transparent outline-none"
+            placeholder="Search messages"
+            className="bg-transparent outline-none w-full"
           />
         </span>
       </div>

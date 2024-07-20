@@ -7,7 +7,6 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 
 const prisma = new PrismaClient().$extends(withAccelerate());
 
-
 // send message to everyone in the websocket connection
 export function sendMessageToAll(data: any) {
   wss.clients.forEach(function each(client: iwebsocket) {
@@ -147,7 +146,7 @@ export function message(data: { event: string; payload: any }, ws: iwebsocket) {
         if (data?.payload?.id) {
           socketIdtoDBuserID.set(ws?.id, data?.payload?.id);
           onlineUser.set(data?.payload?.id, ws?.id);
-          console.log({ socketIdtoDBuserID,onlineUser });
+          console.log({ socketIdtoDBuserID, onlineUser });
           sendMessageToAll({
             event: "user-online",
             payload: { id: data?.payload?.id },
@@ -214,19 +213,59 @@ export function message(data: { event: string; payload: any }, ws: iwebsocket) {
           });
         }
         break;
-      // listening to user offer and sending to the specified user
+      //
+      // transferring call to given user
+      case "call-user":
+        if (data?.payload?.id && data?.payload?.type) {
+          sendMessageToSpecific(
+            {
+              event: "call-user-recieved",
+              payload: {
+                id: socketIdtoDBuserID.get(ws?.id),
+                type: data?.payload?.type,
+              },
+            },
+            onlineUser.get(data?.payload?.id)
+          );
+        }
+        break;
+      //
+      case "call-user-answer":
+        if (data?.payload?.id) {
+          sendMessageToSpecific(
+            {
+              event: "call-user-answer-recieved",
+              payload: {
+                id: socketIdtoDBuserID.get(ws?.id),
+                accepted: data?.payload?.accepted,
+                type: data?.payload?.type,
+              },
+            },
+            onlineUser.get(data?.payload?.id)
+          );
+        }
+        break;
+      // listening to user call offer from sender and sending to the specified user i.e. reciever of call
       case "call-offer":
-        
+        console.log("call-offer: ", {
+          data,
+          user: onlineUser.has(data?.payload?.id),
+        });
+
         if (
           data?.payload?.id &&
-          data?.payload?.senderOFFER &&
+          data?.payload?.offer &&
           data?.payload?.type &&
           onlineUser.has(data?.payload?.id)
         ) {
           sendMessageToSpecific(
             {
               event: "call-offer-recieved",
-              payload: { id: socketIdtoDBuserID.get(ws?.id),type:data?.payload?.type, senderOFFER: data?.payload?.senderOFFER },
+              payload: {
+                id: socketIdtoDBuserID.get(ws?.id),
+                type: data?.payload?.type,
+                offer: data?.payload?.offer,
+              },
             },
             onlineUser.get(data?.payload?.id)
           );
@@ -241,20 +280,24 @@ export function message(data: { event: string; payload: any }, ws: iwebsocket) {
           );
         }
         break;
-      //
-      case 'call-answer':
-        console.log({data,user:onlineUser.has(data?.payload?.id)});
-        
+      // listening to call answer from reciever
+      case "call-answer":
+        console.log({ data, user: onlineUser.has(data?.payload?.id) });
+
         if (
           data?.payload?.id &&
-          data?.payload?.recieverANSWER && data?.payload?.senderOFFER &&
+          data?.payload?.answer &&
           data?.payload?.type &&
           onlineUser.has(data?.payload?.id)
         ) {
           sendMessageToSpecific(
             {
               event: "call-answer-recieved",
-              payload: { id: socketIdtoDBuserID.get(ws?.id), senderOFFER: data?.payload?.senderOFFER,recieverANSWER: data?.payload?.recieverANSWER,type:data?.payload?.type },
+              payload: {
+                id: socketIdtoDBuserID.get(ws?.id),
+                answer: data?.payload?.answer,
+                type: data?.payload?.type,
+              },
             },
             onlineUser.get(data?.payload?.id)
           );
@@ -269,32 +312,41 @@ export function message(data: { event: string; payload: any }, ws: iwebsocket) {
           );
         }
         break;
-        //
-        //
-        case 'call-answered':
-          if(data?.payload?.id && data?.payload?.type && data?.payload?.recieverANSWER){
-            sendMessageToSpecific(
-              {
-                event: "call-answered-recieved",
-                payload: { id: socketIdtoDBuserID.get(ws?.id), recieverANSWER: data?.payload?.recieverANSWER,type:data?.payload?.type },
+      //
+      // // connection senders(who initiated the call) reciever connection with recievers(whom the sender called) sender connection
+      // case 'call-answered':
+      //   if(data?.payload?.id && data?.payload?.type && data?.payload?.recieverANSWER){
+      //     sendMessageToSpecific(
+      //       {
+      //         event: "call-answered-recieved",
+      //         payload: { id: socketIdtoDBuserID.get(ws?.id), recieverANSWER: data?.payload?.recieverANSWER,type:data?.payload?.type },
+      //       },
+      //       onlineUser.get(data?.payload?.id)
+      //     );
+      //   }
+      //   break;
+      // //
+      //
+      case "call-user-iceCandidate":
+        if (
+          data?.payload?.id &&
+          data?.payload?.iceCandidate &&
+          data?.payload?.from &&
+          onlineUser.has(data?.payload?.id)
+        ) {
+          sendMessageToSpecific(
+            {
+              event: "call-user-iceCandidate-recieved",
+              payload: {
+                id: socketIdtoDBuserID.get(ws?.id),
+                from: data?.payload?.from,
+                iceCandidate: data?.payload?.iceCandidate,
               },
-              onlineUser.get(data?.payload?.id)
-            );
-          }
-          break;
-        //
-        //
-        case 'call-user-iceCandidate':
-          if(data?.payload?.id && data?.payload?.iceCandidate && onlineUser.has(data?.payload?.to)){
-            sendMessageToSpecific(
-              {
-                event: "call-user-iceCandidate-recieved",
-                payload: { id: socketIdtoDBuserID.get(ws?.id),iceCandidate:data?.payload?.iceCandidate},
-              },
-              onlineUser.get(data?.payload?.id)
-            );
-          }
-          break;
+            },
+            onlineUser.get(data?.payload?.id)
+          );
+        }
+        break;
       default:
         console.log("No event found");
 

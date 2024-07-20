@@ -19,7 +19,8 @@ const app = express();
 
 
 // configuring app middlewares
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true ,exposedHeaders: ["Set-cookie"]}));
+app.set("trust proxy", 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

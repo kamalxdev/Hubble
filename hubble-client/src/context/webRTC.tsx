@@ -4,22 +4,25 @@ import { iOpenChatValue, OpenChatContext } from "./OpenedChat";
 
 export type iwebRTCcontext = {
   peer: iPeer;
-  setPeer: (x: iPeer) => void;
-  setCall: (x: iCall) => void;
+  setCall: (x: iCall |{}) => void;
   call: iCall;
-  media: MediaStream;
-  setMedia: (x: MediaStream) => void;
 };
 export type iPeer = {
   sender: RTCPeerConnection;
   reciever: RTCPeerConnection;
 };
-type iCall = {
+export type iCall = {
   user: {
     id: string;
+    username?: string;
+    name?: string;
+    email?: string;
   };
+  iceCandidate?: any;
+  senderOffer?: any;
   type: string;
-  answered:boolean
+  Useris: "sender" | "reciever";
+  answered: boolean;
 };
 
 export const webRTCcontext = createContext<iwebRTCcontext | {}>({});
@@ -29,14 +32,16 @@ export function WebRTCcontextProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const [call, setCall] = useState<iCall | {}>({});
   const socket = useContext(socketContext) as WebSocket;
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
 
-  const [call, setCall] = useState<iCall>();
-  const [media, setMedia] = useState<MediaStream>();
   const [peer, setPeer] = useState<iPeer>({
     sender: new RTCPeerConnection(),
     reciever: new RTCPeerConnection(),
+  });
+  useEffect(() => {
+    console.log("call from rtc:", call);
   });
   if (peer?.sender) {
     peer.sender.onicecandidate = (event) => {
@@ -44,25 +49,31 @@ export function WebRTCcontextProvider({
         socket?.send(
           JSON.stringify({
             event: "call-user-iceCandidate",
-            payload: { id: call?.user?.id, iceCandidate: event?.candidate },
+            
+            payload: {
+              id: (call as iCall)?.user?.id,
+              from:'sender',
+              iceCandidate: event?.candidate,
+            },
           })
         );
       }
     };
-    peer.sender.onnegotiationneeded = async ()=>{
-        let offer = await peer?.sender?.createOffer();
-    await peer?.sender?.setLocalDescription(offer);
-    socket.send(
-      JSON.stringify({
-        event: "call-offer",
-        payload: {
-          id: openChat?.currentUniqueUserId,
-          type:call?.type,
-          senderOFFER: peer?.sender?.localDescription,
-        },
-      })
-    );
-    }
+    peer.sender.onnegotiationneeded = async () => {
+      // generating offer and starting connection
+      let offer = await peer?.sender?.createOffer();
+      await peer?.sender?.setLocalDescription(offer);
+      socket.send(
+        JSON.stringify({
+          event: "call-offer",
+          payload: {
+            id: (call as iCall)?.user?.id ,
+            type: (call as iCall)?.type,
+            offer: peer?.sender?.localDescription,
+          },
+        })
+      );
+    };
   }
   if (peer?.reciever) {
     peer.reciever.onicecandidate = (event) => {
@@ -70,7 +81,11 @@ export function WebRTCcontextProvider({
         socket?.send(
           JSON.stringify({
             event: "call-user-iceCandidate",
-            payload: { id: call?.user?.id, iceCandidate: event?.candidate },
+            payload: {
+              id: (call as iCall)?.user?.id,
+              from:'reciever',
+              iceCandidate: event?.candidate,
+            },
           })
         );
       }
@@ -78,9 +93,7 @@ export function WebRTCcontextProvider({
   }
 
   return (
-    <webRTCcontext.Provider
-      value={{ peer, setPeer, call, setCall, media, setMedia }}
-    >
+    <webRTCcontext.Provider value={{ peer, call, setCall }}>
       {children}
     </webRTCcontext.Provider>
   );

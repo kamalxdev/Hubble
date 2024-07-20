@@ -8,19 +8,19 @@ import { memo,} from "react";
 
 function MessagesLoader() {
     
-  const friends = [{},{},{},{},{}]
+  const friends = [{key:1},{key:2},{key:3},{key:4},{key:5}]
   return (
-    <section className="animate-pulse" key={'message'}>
+    <section className="animate-pulse">
       <SearchbarLoader />
-      <div className="relative h-[90vh] overflow-y-scroll" key={"hell"}>
-        <div className=" inline-flex flex-col justify-center w-full" key={"friends"}>
+      <div className="relative h-[90vh] overflow-y-scroll" >
+        <div className=" inline-flex flex-col justify-center w-full">
           {/* <Friend /> */}
-          {friends.map(() => {
+          {friends.map((f) => {
             return (
-              <>
-                <FriendLoader/>
-                <hr className="mx-10"/>
-              </>
+              <span key={'span'+f.key+'friend'}>
+                <FriendLoader key={f.key}/>
+                <hr className="mx-10" key={f.key+'hr'}/>
+              </span>
             );
           })}
         </div>
