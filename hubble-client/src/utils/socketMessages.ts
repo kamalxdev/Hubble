@@ -117,6 +117,8 @@ export async function listenMessages(
             navigator.mediaDevices
               .getUserMedia({ video: true, audio: true })
               .then((stream) => {
+                // webRTC?.peer?.sender?.addTrack(stream.getAudioTracks()[0]);
+                // webRTC?.peer?.sender?.addTrack(stream.getVideoTracks()[0]);
                 stream.getTracks().forEach((track) => {
                   webRTC?.peer?.sender?.addTrack(track);
                 });
@@ -155,54 +157,29 @@ export async function listenMessages(
           await webRTC?.peer?.sender?.setRemoteDescription(
             data?.payload?.answer
           );
-          //   await webRTC?.peer?.sender.setRemoteDescription(
-          //     data?.payload?.recieverANSWER
-          //   );
-          //   await webRTC?.peer?.reciever.setRemoteDescription(
-          //     data?.payload?.senderOFFER
-          //   );
-          //   let recieverANSWER = await webRTC?.peer?.reciever?.createAnswer();
-          //   webRTC?.setCall({...webRTC?.call,answered:true})
-          //   await webRTC?.peer?.reciever.setLocalDescription(recieverANSWER);
-          //   await webRTC?.peer?.sender?.addIceCandidate(
-          //     webRTC?.call?.iceCandidate
-          //   )
-          //   await webRTC?.peer?.reciever?.addIceCandidate(
-          //     webRTC?.call?.iceCandidate
-          //   )
-          //   socket.send(
-          //     JSON.stringify({
-          //       event: "call-answered",
-          //       payload: {
-          //         id: data?.payload?.id,
-          //         type:data?.payload?.type,
-          //         recieverANSWER: webRTC?.peer?.reciever?.localDescription,
-          //       },
-          //     })
-          //   );
         }
 
         break;
       //
-      // reciever part:
-      case "call-answered-recieved":
-        if (
-          data?.payload?.id &&
-          data?.payload?.recieverANSWER &&
-          data?.payload?.type
-        ) {
-          await webRTC?.peer?.sender?.setRemoteDescription(
-            data?.payload?.recieverANSWER
-          );
-          await webRTC?.peer?.sender?.addIceCandidate(
-            webRTC?.call?.iceCandidate
-          );
-          await webRTC?.peer?.reciever?.addIceCandidate(
-            webRTC?.call?.iceCandidate
-          );
-        }
-        break;
-      //
+      // // reciever part:
+      // case "call-answered-recieved":
+      //   if (
+      //     data?.payload?.id &&
+      //     data?.payload?.recieverANSWER &&
+      //     data?.payload?.type
+      //   ) {
+      //     await webRTC?.peer?.sender?.setRemoteDescription(
+      //       data?.payload?.recieverANSWER
+      //     );
+      //     await webRTC?.peer?.sender?.addIceCandidate(
+      //       webRTC?.call?.iceCandidate
+      //     );
+      //     await webRTC?.peer?.reciever?.addIceCandidate(
+      //       webRTC?.call?.iceCandidate
+      //     );
+      //   }
+      //   break;
+      // //
       //
       case "call-user-iceCandidate-recieved":
         if (data?.payload?.iceCandidate && data?.payload?.from) {

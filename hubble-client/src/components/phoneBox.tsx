@@ -8,7 +8,6 @@ function PhoneBox() {
   // const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
   // const socket = useContext(socketContext) as WebSocket;
 
-
   return (
     <div className="w-full h-full">
       <VideoCall />
@@ -66,14 +65,26 @@ const VideoCall = memo(function VideoCall() {
           current_user_video.current.srcObject = stream;
         }
       });
+      if (webRTC?.peer?.reciever) {
+        webRTC.peer.reciever.ontrack = (event) => {
+          if (another_user_video?.current) {
+            another_user_video.current.srcObject = new MediaStream([
+              event.track,
+            ]);
+          }
+        };
+      }
+    setTimeout(() => {
+      if (webRTC?.peer?.reciever) {
+        const track1= webRTC?.peer?.reciever?.getTransceivers()[0]?.receiver?.track
+        const track2= webRTC?.peer?.reciever?.getTransceivers()[1]?.receiver?.track
 
-    if (webRTC?.peer?.reciever) {
-      webRTC.peer.reciever.ontrack = (event) => {
-        if (another_user_video?.current) {
-          another_user_video.current.srcObject = new MediaStream([event.track]);
-        }
-      };
-    }
+          if (another_user_video?.current) {
+            
+            another_user_video.current.srcObject = new MediaStream([track1,track2]);
+          }
+      }
+    }, 5000);
   }, []);
   return (
     <div className="w-full h-full bg-zinc-800">
