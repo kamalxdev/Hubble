@@ -36,7 +36,7 @@ export default function Home() {
 
       <div className="transition flex flex-cols w-full">
         <Sidebar theme="white" />
-        <div className="border grid grid-cols-3 w-full">
+        <div className="grid grid-cols-3 w-full">
           {(webRTC?.call?.user?.id && webRTC?.call?.Useris=='sender') || (webRTC?.call?.Useris=='reciever' && webRTC?.call?.answered)  ? (
             <>
               <section className="transition-all shadow-xl">
@@ -48,7 +48,7 @@ export default function Home() {
             </>
           ) : (
             <>
-              <section className="transition-all shadow-xl">
+              <section className="transition-all ">
                 <Messages key={"messages"} />
               </section>
               <section className="transition-all relative col-span-2">

@@ -5,7 +5,7 @@ import { currentUser, iCurrentUserContext } from "../context/user";
 import { Link } from "react-router-dom";
 import { socketContext } from "../context/socket";
 import ChatBoxLoader from "../loader/chatbox";
-import { iCall, iwebRTCcontext, webRTCcontext } from "../context/webRTC";
+import {iwebRTCcontext, webRTCcontext } from "../context/webRTC";
 
 function ChatBox() {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
@@ -18,17 +18,17 @@ function ChatBox() {
   });
   
   if (!openChat.currentUniqueUserId) {
-    return <div></div>;
+    return <div className="bg-slate-950 w-full h-full"></div>;
   }
   if (openChat?.loading) {
     return <ChatBoxLoader />;
   }
   let currentDate: Date;
   return (
-    <section className="flex flex-col justify-between transition overflow-hidden ">
+    <section className="flex flex-col justify-between transition overflow-hidden bg-slate-950">
       <ChatTopBar />
-      <div className="relative h-[84vh] overflow-hidden overflow-y-scroll bg-zinc-800 ">
-        <div className="inline-flex flex-col gap-5 bg-zinc-800 w-full py-5 px-10 overflow-hidden  ">
+      <div className="relative h-[86vh] overflow-hidden overflow-y-scroll ">
+        <div className="inline-flex flex-col gap-5 w-full py-5 px-10 overflow-hidden  ">
 
           {openChat?.currentUserChats?.map((chat, index) => {
             let chatDate = new Date(chat?.time);
@@ -98,14 +98,14 @@ const ChatTopBar = memo(function ChatTopBar() {
         
       });
   }
-  const topBarLeftStyling = "hover:bg-slate-300 transition p-3 rounded-md ";
+  const topBarLeftStyling = "hover:bg-slate-700 transition p-3 rounded-md ";
   return (
-    <div className="flex h-[8vh] w-full top-0 justify-between items-center bg-slate-200 px-10 py-2 text-black">
+    <div className="flex h-[8vh] w-full top-0 justify-between items-center bg-slate-800 px-10 py-2 text-white">
       <Link
         to={"/"}
-        className="inline-flex justify-center items-center gap-3 border p-2 rounded-md hover:bg-slate-300 transition"
+        className="inline-flex justify-center items-center gap-3 p-2 rounded-md hover:bg-slate-700 transition"
       >
-        <span className="flex justify-center items-center border rounded-full border-black p-1 text-black">
+        <span className="flex justify-center items-center border rounded-full p-1 ">
           <User />
         </span>
         <span className="flex flex-col transition-all">
@@ -126,7 +126,7 @@ const ChatTopBar = memo(function ChatTopBar() {
             )}
         </span>
       </Link>
-      <span className="flex border gap-2">
+      <span className="flex gap-2">
         <button
           type="button"
           onClick={() => handleCreateCall("voice")}
@@ -186,7 +186,7 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
     setMessage("");
   }
   return (
-    <div className="flex relative bottom-0 justify-between text-black bg-slate-300 shadow-inner px-5 py-2 gap-5 h-[8vh]">
+    <div className="flex relative bottom-0 justify-between text-white bg-slate-700 shadow-inner px-5 py-2 gap-5 h-[6vh]">
       <input
         type="text"
         autoFocus
@@ -206,13 +206,13 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
                 })
               )
         }
-        className="bg-slate-200 outline-none w-full shadow-inner px-5 py-2 text-xl rounded-md  "
-        placeholder="Type your message..."
+        className="outline-none w-full shadow-inner px-5 py-2 text-lg rounded-md bg-slate-800 "
+        placeholder="Type a message..."
         value={message}
       />{" "}
       <button
         onClick={handleSendMessage}
-        className="p-3 bg-green-500 text-white shadow hover:shadow-2xl transition rounded-md"
+        className="px-3  py-1 bg-green-500 text-white shadow hover:shadow-2xl transition rounded-md"
       >
         <Send size={20} />
       </button>
@@ -232,7 +232,7 @@ const Chat = memo(function Chat(props: iChatProps) {
     <>
       {props.showDate && (
         <div className="w-full flex justify-center">
-          <span className="text-white bg-black w-fit rounded-sm text-xs py-1 px-3 ">
+          <span className="text-white bg-slate-800 w-fit rounded-sm text-xs py-1 px-3 ">
             {new Date()?.toJSON().slice(0, 10).replace(/-/g, "/") ==
             new Date(props?.time)?.toJSON().slice(0, 10).replace(/-/g, "/")
               ? "Today"
@@ -243,8 +243,8 @@ const Chat = memo(function Chat(props: iChatProps) {
       <div
         className={`inline-flex flex-col w-fit max-w-md md:max-w-xl px-3 rounded-md ${
           props.from == "sender"
-            ? "text-white bg-slate-900"
-            : "text-black bg-white ml-auto"
+            ? "text-white bg-slate-700"
+            : "text-black bg-slate-200 ml-auto"
         }`}
       >
         <span
@@ -253,7 +253,7 @@ const Chat = memo(function Chat(props: iChatProps) {
         >
           {props.message}
         </span>
-        <span className="inline-flex justify-end text-slate-600 text-xs ml-auto ">
+        <span className="inline-flex justify-end text-xs ml-auto opacity-70">
           {new Date(props?.time)
             ?.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
             .toLowerCase()}

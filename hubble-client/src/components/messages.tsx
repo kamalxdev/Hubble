@@ -7,6 +7,7 @@ import MessagesLoader from "../loader/messages";
 
 function Messages() {
   const user = useContext(currentUser) as iCurrentUserContext;
+
   if (user.currentuser.loading || user.allUser.loading) {
     return <MessagesLoader />;
   }
@@ -15,7 +16,7 @@ function Messages() {
   }
   const friends = user?.allUser?.response?.allUser as iUser[];
   return (
-    <section className="" key={"message"}>
+    <section className="bg-slate-900" key={"message"}>
       <Searchbar />
       <div className="relative h-[90vh] overflow-y-scroll" key={"hell"}>
         <div
@@ -31,7 +32,6 @@ function Messages() {
                   key={friend.username}
                   username={friend?.username}
                 />
-                <hr className="mx-10" key={index} />
               </Fragment>
             );
           })}
@@ -43,8 +43,8 @@ function Messages() {
 
 const Searchbar = memo(function Searchbar() {
   return (
-    <div className="flex justify-center w-full bg-white p-6 z-10 h-[10vh]">
-      <div className="inline-flex items-center gap-2 px-3 bg-slate-100 ounded-md w-full">
+    <div className="flex justify-center w-full p-6 z-10 h-[10vh]">
+      <div className="inline-flex items-center gap-2 px-3 bg-slate-700 text-white rounded-md w-full">
         <span>
           <Search size={16} />
         </span>
@@ -75,18 +75,18 @@ const Friend = memo(function Friend(props: iFriendProps) {
       onClick={() => {
         openChat?.setUniqueUserId(props.UniqueUserID);
       }}
-      className="inline-flex justify-start items-center gap-4 p-2 mx-5 my-2 hover:bg-slate-200/70 transition rounded-md"
+      className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white hover:bg-slate-600/50 transition rounded-md ${openChat?.currentUniqueUserId===props?.UniqueUserID && "bg-slate-600"}`}
     >
       <span
         key={"user_avatar"}
-        className="flex justify-center items-center border rounded-full border-black p-1 text-black"
+        className="flex justify-center items-center border rounded-full p-1 border-white"
       >
         <User />
       </span>
-      <span className="flex flex-col w-full" key={"user_details"}>
+      <span className="flex flex-col w-full border-y p-2 border-slate-800 " key={"user_details"}>
         <span className="flex justify-between">
           <h1>{props.name}</h1>
-          <h3 className="text-slate-300 text-xs">@{props.username}</h3>
+          <h3 className="opacity-75 text-xs">@{props.username}</h3>
         </span>
         <span
           className="flex justify-between items-end text-slate-400 text-sm"
