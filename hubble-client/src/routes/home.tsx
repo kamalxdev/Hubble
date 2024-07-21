@@ -35,7 +35,7 @@ export default function Home() {
       {(webRTC?.call?.user?.id && webRTC?.call?.Useris=='reciever') && (webRTC?.call?.answered?'':<IncomingCall />)}
 
       <div className="transition flex flex-cols w-full">
-        <Sidebar theme="white" />
+        <Sidebar/>
         <div className="grid grid-cols-3 w-full">
           {(webRTC?.call?.user?.id && webRTC?.call?.Useris=='sender') || (webRTC?.call?.Useris=='reciever' && webRTC?.call?.answered)  ? (
             <>

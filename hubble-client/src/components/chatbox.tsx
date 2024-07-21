@@ -85,7 +85,7 @@ const ChatTopBar = memo(function ChatTopBar() {
   function handleCreateCall(type: string) {
     navigator.mediaDevices
     .getUserMedia({ video: true, audio: true })
-    .then( (stream) => {
+    .then( () => {
       webRTC?.setCall({ ...webRTC?.call,
         user: { id: openChat.currentUniqueUserId },
         type,

@@ -1,5 +1,5 @@
 
-import { createContext, useEffect} from "react";
+import { createContext} from "react";
 import useGetData, { igetData } from "../hooks/axios/getData";
 import { useCookies } from "react-cookie";
 

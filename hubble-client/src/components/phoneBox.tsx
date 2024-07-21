@@ -1,12 +1,8 @@
 import { Maximize, MicOff, Phone, VideoOff } from "lucide-react";
 import { memo, useContext, useEffect, useRef } from "react";
-import { iCall, iwebRTCcontext, webRTCcontext } from "../context/webRTC";
-import { socketContext } from "../context/socket";
+import { iwebRTCcontext, webRTCcontext } from "../context/webRTC";
 
 function PhoneBox() {
-  // const Called
-  // const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
-  // const socket = useContext(socketContext) as WebSocket;
 
   return (
     <div className="w-full h-full">
@@ -47,9 +43,9 @@ function PhoneBox() {
   );
 }
 
-const VoiceCall = memo(function VoiceCall() {
-  return <div></div>;
-});
+// const VoiceCall = memo(function VoiceCall() {
+//   return <div></div>;
+// });
 
 const VideoCall = memo(function VideoCall() {
   const webRTC = useContext(webRTCcontext) as iwebRTCcontext;

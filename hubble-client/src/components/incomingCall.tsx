@@ -3,7 +3,6 @@ import { memo, useContext, useEffect } from "react";
 import { iwebRTCcontext, webRTCcontext } from "../context/webRTC";
 import useGetData from "../hooks/axios/getData";
 import { useCookies } from "react-cookie";
-import { iUser } from "../types/user";
 import { socketContext } from "../context/socket";
 
 function IncomingCall() {

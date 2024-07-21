@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { socketContext } from "./socket";
-import { iOpenChatValue, OpenChatContext } from "./OpenedChat";
 
 export type iwebRTCcontext = {
   peer: iPeer;

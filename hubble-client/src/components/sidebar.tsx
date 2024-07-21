@@ -6,12 +6,7 @@ import { currentUser, iCurrentUserContext } from "../context/user";
 import { Link } from "react-router-dom";
 
 
-type iprops={
-    theme:string
-}
-
-
-function Sidebar(props:iprops) {
+function Sidebar() {
     const user= useContext(currentUser) as iCurrentUserContext;
     const hover_btn_class='hover:bg-slate-700 p-3 rounded-md transition'
     return (
