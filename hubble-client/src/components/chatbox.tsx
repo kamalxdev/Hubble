@@ -18,7 +18,7 @@ function ChatBox() {
   });
   
   if (!openChat.currentUniqueUserId) {
-    return <div className="bg-slate-950 w-full h-full"></div>;
+    return <div className="bg-slate-950 w-full h-full flex justify-center items-center text-white"><p className="opacity-30">Select a chat to view messages</p></div>;
   }
   if (openChat?.loading) {
     return <ChatBoxLoader />;

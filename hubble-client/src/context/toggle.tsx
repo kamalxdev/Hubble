@@ -1,15 +1,23 @@
-import { createContext } from "react";
+import { createContext, useState } from "react";
 
 
 
-export const toggleContext = createContext({});
+export const toggleContext = createContext<iToggleContext|{}>({});
+
+export type iToggleContext={
+  sidebar:iSidebar,
+  setSidebar:(x:iSidebar)=>void
+}
 
 
+
+export type iSidebar= 'chats' | 'calls' | 'notes';
 
 export function ToggleContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <toggleContext.Provider value={{}}>{children}</toggleContext.Provider>;
+  const [sidebar,setSidebar]=useState<iSidebar>('chats')
+  return <toggleContext.Provider value={{sidebar,setSidebar}}>{children}</toggleContext.Provider>;
 }

@@ -8,9 +8,11 @@ import IncomingCall from "../components/incomingCall";
 import { iwebRTCcontext, webRTCcontext } from "../context/webRTC";
 import Calls from "../components/calls";
 import PhoneBox from "../components/phoneBox";
+import { iToggleContext, toggleContext } from "../context/toggle";
 
 export default function Home() {
   const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
+  const toggle= useContext(toggleContext) as iToggleContext;
 
   const [cookies] = useCookies();
 
@@ -37,12 +39,12 @@ export default function Home() {
       <div className="transition flex flex-cols w-full">
         <Sidebar/>
         <div className="grid grid-cols-3 w-full">
-          {(webRTC?.call?.user?.id && webRTC?.call?.Useris=='sender') || (webRTC?.call?.Useris=='reciever' && webRTC?.call?.answered)  ? (
+          {(webRTC?.call?.user?.id && webRTC?.call?.Useris=='sender') || (webRTC?.call?.Useris=='reciever' && webRTC?.call?.answered) || (toggle.sidebar=='calls')  ? (
             <>
               <section className="transition-all shadow-xl">
                 <Calls />
               </section>
-              <section className="transition-all  relative col-span-2">
+              <section className="transition-all relative col-span-2">
                 <PhoneBox />
               </section>
             </>

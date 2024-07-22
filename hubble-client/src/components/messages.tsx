@@ -75,7 +75,7 @@ const Friend = memo(function Friend(props: iFriendProps) {
       onClick={() => {
         openChat?.setUniqueUserId(props.UniqueUserID);
       }}
-      className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white hover:bg-slate-600/50 transition rounded-md ${openChat?.currentUniqueUserId===props?.UniqueUserID && "bg-slate-600"}`}
+      className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white transition rounded-md ${openChat?.currentUniqueUserId===props?.UniqueUserID?"bg-slate-800":'hover:bg-slate-700 '}`}
     >
       <span
         key={"user_avatar"}
