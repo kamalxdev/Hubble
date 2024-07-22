@@ -21,22 +21,25 @@ function IncomingCall() {
     true,
     [webRTC?.call?.user?.id]
   );
-  // if (getUser?.response?.success) {
-  //   webRTC?.setCall({
-  //     ...webRTC?.call,
-  //     user: getUser?.response?.user as iUser,
-  //   });
-  // }
-
-
+  
+  
   // call ringtone
   const audio = new Audio("/audio/ring.mp3");
-  useEffect(()=>{
+  if (getUser?.response?.success) {
     audio.loop = true;
     audio.play();
+  }
+
+  const callTimeout=setTimeout(()=>{
+    audio.pause();
+    webRTC?.setCall({})
+    socket.send(JSON.stringify({event:'call-user-answer',payload:{id:webRTC?.call?.user?.id,accepted:false,type:webRTC?.call?.type}}))
+  },10000)
+  useEffect(()=>{
     return () => {
       audio.pause();
       audio.remove();
+      clearTimeout(callTimeout)
     };
   },[])
 
@@ -51,7 +54,7 @@ function IncomingCall() {
 
   // function to handle call rejection
   function handleRejectCall() {
-    // audio.pause();
+    audio.pause();
     webRTC?.setCall({})
     socket.send(JSON.stringify({event:'call-user-answer',payload:{id:webRTC?.call?.user?.id,accepted:false,type:webRTC?.call?.type}}))
   }
@@ -65,7 +68,7 @@ function IncomingCall() {
  
   return (
     <div
-      className={`absolute first-letter top-5 z-50 w-full justify-center flex`}
+      className={`absolute first-letter top-5 z-50 w-full justify-center ${getUser?.response?.success?"flex":'hidden'} `}
     >
       <div className="flex justify-start items-center gap-4 p-2 mx-5 my-2 bg-slate-900 text-white  transition rounded-md animate-bounce">
         <span

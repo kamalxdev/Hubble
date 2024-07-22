@@ -86,7 +86,7 @@ export async function listenMessages(
                 ...openChat?.typing,
                 [data?.payload?.id]: false,
               });
-            }, 2500);
+            }, 1000);
           } else {
             openChat.setTyping({ [data?.payload?.id]: true });
             setTimeout(() => {
@@ -114,19 +114,6 @@ export async function listenMessages(
         if (data?.payload?.id) {
           if (data?.payload?.accepted) {
             webRTC?.setCall({ ...webRTC?.call, answered: true });
-            // webRTC?.setPeer({
-            //   sender: new RTCPeerConnection(),
-            //   reciever: new RTCPeerConnection(),
-            // })
-            // navigator.mediaDevices
-            //   .getUserMedia({ video: true, audio: true })
-            //   .then((stream) => {
-            //     // webRTC?.peer?.sender?.addTrack(stream.getAudioTracks()[0]);
-            //     // webRTC?.peer?.sender?.addTrack(stream.getVideoTracks()[0]);
-            //     stream.getTracks().forEach((track) => {
-            //       webRTC?.peer?.sender?.addTrack(track);
-            //     });
-            //   });
             webRTC?.sendVideo()
           } else {
             webRTC?.setCall({});

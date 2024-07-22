@@ -186,7 +186,7 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
     setMessage("");
   }
   return (
-    <div className="flex relative bottom-0 justify-between text-white bg-slate-700 shadow-inner px-5 py-2 gap-5 h-[6vh]">
+    <div className="flex relative bottom-0 justify-between text-white bg-slate-800 shadow-inner px-5 py-2 gap-5 h-[6vh]">
       <input
         type="text"
         autoFocus
@@ -206,7 +206,7 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
                 })
               )
         }
-        className="outline-none w-full shadow-inner px-5 py-2 text-lg rounded-md bg-slate-800 "
+        className="outline-none w-full shadow-inner px-5 py-2 text-lg rounded-md bg-slate-700 "
         placeholder="Type a message..."
         value={message}
       />{" "}
