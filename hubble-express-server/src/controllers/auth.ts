@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { loginSchema, registerSchema } from "../utils/zodSchema";
+import { client } from "../redis";
 
 const prisma = new PrismaClient().$extends(withAccelerate());
 const SECRET = process.env.JWT_SECRET as string;
@@ -26,12 +27,14 @@ export async function postLogin(req: Request, res: Response) {
     }
     //
     // check if user email exist
-    const USER = await prisma.user.findFirst({
-      where: {
-        email: body?.email,
-      },
-      cacheStrategy: { ttl: 60 },
-    });
+    // const USER = await prisma.user.findFirst({
+    //   where: {
+    //     email: body?.email,
+    //   },
+    //   cacheStrategy: { ttl: 60 },
+    // });
+    const allUser=await client.get('users')
+    const USER=JSON.parse(allUser as string)?.filter((user:User)=>user.email==body?.email)
     if (!USER) {
       return res.json({
         success: false,
@@ -40,20 +43,20 @@ export async function postLogin(req: Request, res: Response) {
     }
     //
     // checking user password
-    const comparePassword = bcrypt.compareSync(body?.password, USER?.password);
+    const comparePassword = bcrypt.compareSync(body?.password, USER[0]?.password);
     if (!comparePassword) {
       return res.json({ success: false, error: "Incorrect Password" });
     }
     //
     // signing jwt  and creating token
     const token = jwt.sign(
-      { email: USER.email, name: USER.name, username: USER.username },
+      { email: USER[0].email, name: USER[0].name, username: USER[0].username },
       SECRET
     );
-    // , { httpOnly: process.env.COOKIE_HTTPONLY=='true'?true:false,sameSite:'none',secure:false}
+    // , 
     return res
-      .cookie("auth", token)
-      .json({ success: true, USER });
+      .cookie("auth", token,{ httpOnly: process.env.COOKIE_HTTPONLY=='true'?true:false,sameSite:'none',secure:true})
+      .json({ success: true, USER:USER[0] });
     //
   } catch (error) {
     console.log("Error on PostLogin: ",error);
@@ -106,6 +109,10 @@ export async function postRegister(req: Request, res: Response) {
         password: hashedPassword,
       }
     })
+    //
+    // setting users in redis
+    const allusers=await prisma.user.findMany({})
+    await client.set('users',JSON.stringify(allusers))
     //
     return res.json({ success: true, USER })
  } catch (error) {

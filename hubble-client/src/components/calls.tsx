@@ -1,9 +1,10 @@
-import { Ban, Dot, PhoneIncoming, PhoneOutgoing, Search, User } from "lucide-react";
+import { Ban, Dot, PhoneIncoming, PhoneOutgoing, User } from "lucide-react";
 import { Fragment, memo, useContext } from "react";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
 import { iUser } from "../types/user";
 import MessagesLoader from "../loader/messages";
+import SearchBar from "./searchBar";
 
 function Calls() {
   const user = useContext(currentUser) as iCurrentUserContext;
@@ -17,7 +18,8 @@ function Calls() {
   const friends = user?.allUser?.response?.allUser as iUser[];
   return (
     <section className="bg-slate-900" key={"message"}>
-      <Searchbar />
+            <SearchBar placeholder="Search calls" for='call'/>
+
       <div className="relative h-[90vh] overflow-y-scroll" key={"hell"}>
         <div
           className=" inline-flex flex-col justify-center w-full"
@@ -40,25 +42,6 @@ function Calls() {
     </section>
   );
 }
-
-const Searchbar = memo(function Searchbar() {
-  return (
-    <div className="flex justify-center w-full p-6 z-10 h-[10vh]">
-      <div className="inline-flex items-center gap-2 px-3 bg-slate-700 text-white rounded-md w-full">
-        <span>
-          <Search size={16} />
-        </span>
-        <span className="w-full">
-          <input
-            type="search"
-            placeholder="Search calls"
-            className="bg-transparent outline-none w-full"
-          />
-        </span>
-      </div>
-    </div>
-  );
-});
 
 type iFriendProps = {
   name: string;

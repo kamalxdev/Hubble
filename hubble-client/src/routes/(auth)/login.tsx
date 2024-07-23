@@ -8,9 +8,7 @@ function Login() {
     password: "",
   });
 
-  const loginUser = usePostData("/auth/login", data, "/", {
-    withCredentials: true,
-  });
+  const loginUser = usePostData("/auth/login", data, "/", );
 
   return (
     <section>

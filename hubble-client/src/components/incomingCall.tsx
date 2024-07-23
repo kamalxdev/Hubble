@@ -2,22 +2,16 @@ import { User } from "lucide-react";
 import { memo, useContext, useEffect } from "react";
 import { iwebRTCcontext, webRTCcontext } from "../context/webRTC";
 import useGetData from "../hooks/axios/getData";
-import { useCookies } from "react-cookie";
 import { socketContext } from "../context/socket";
 
 function IncomingCall() {
   const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
   const socket = useContext(socketContext) as WebSocket;
 
-  const [cookies] = useCookies();
 
   const getUser = useGetData(
     `/user?id=${webRTC?.call?.user?.id}`,
-    {
-      headers: {
-        authorization: cookies["auth"],
-      },
-    },
+    {},
     true,
     [webRTC?.call?.user?.id]
   );

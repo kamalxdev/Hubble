@@ -18,7 +18,7 @@ export default function usePostData(
   async function call() {
     setLoading(true);
     await axios
-      .post(import.meta.env.VITE_SERVER_URL + "/api/v1" + url, data, options)
+      .post(import.meta.env.VITE_SERVER_URL + "/api/v1" + url, data, {...options,withCredentials:true})
       .then((res) => {
         setLoading(false);
         if(!res?.data?.success){

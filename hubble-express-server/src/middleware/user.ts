@@ -15,15 +15,17 @@ export async function authorizationHeader(
   res: Response,
   next: NextFunction
 ) {
-  const authorization = req.headers.authorization as string;
-  if (!authorization) {
+  const authCookie=req.cookies.auth as string
+
+  
+  if (!authCookie) {
     return res.json({
       success: false,
-      error: "Authorization token missing from header",
+      error: "Authorization cookie missing",
     });
   }
   // verify the user token
-  jwt.verify(authorization, SECRET, async (err, decoded) => {
+  jwt.verify(authCookie, SECRET, async (err, decoded) => {
     if (err) {
       return res.json({ success: false, error: "Invalid User" });
     }

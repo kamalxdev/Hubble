@@ -1,6 +1,7 @@
-import { PrismaClient } from "@prisma/client/edge";
+import { PrismaClient, User } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Request, Response } from "express";
+import { client } from "../redis";
 const prisma = new PrismaClient().$extends(withAccelerate());
 
 export async function getUser(req: Request, res: Response) {
@@ -47,6 +48,23 @@ export async function getUserVerification(req: Request, res: Response){
     return res.json({success:true,user})
   } catch (error) {
     console.log("Error on getUserVerification: ", error);
+    return res.json({ success: false, error: "Internal Server Error" });
+  }
+}
+
+
+export async function getUserSearchResult(req: Request, res: Response){
+  try {
+    const query = req?.query?.q as string;
+    if(!query) return res.json({ success: false });
+    const allUsers=await client.get('users')
+    
+    const allUsersFiltered: User[]= JSON.parse(allUsers as string)?.filter((user:User)=> user?.name?.toLowerCase().startsWith(query.toLowerCase()) || user?.username?.toLowerCase().startsWith(query.toLowerCase()))
+    return res.json({ success: true, searchResult:allUsersFiltered });
+
+  } catch (error) {
+    console.log("Error on getUserSearchResult: ", error);
+
     return res.json({ success: false, error: "Internal Server Error" });
   }
 }

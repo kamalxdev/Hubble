@@ -23,7 +23,7 @@ export default function useGetData(
   if (withUseEffect) {
     useEffect(() => {
       axios
-        .get(import.meta.env.VITE_SERVER_URL + "/api/v1" + url, options)
+        .get(import.meta.env.VITE_SERVER_URL + "/api/v1" + url, {...options,withCredentials:true})
         .then((res) => {
           setResponse(res.data);
           setLoading(false);
@@ -36,7 +36,7 @@ export default function useGetData(
     }, dependency);
   }else{
     axios
-    .get(import.meta.env.VITE_SERVER_URL+'/api/v1' + url, options)
+    .get(import.meta.env.VITE_SERVER_URL+'/api/v1' + url, {...options,withCredentials:true})
     .then((res) => {
       setResponse(res.data);
       setLoading(false);

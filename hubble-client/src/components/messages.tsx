@@ -1,9 +1,10 @@
-import { Search, User } from "lucide-react";
+import { User } from "lucide-react";
 import { Fragment, memo, useContext } from "react";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
 import { iUser } from "../types/user";
 import MessagesLoader from "../loader/messages";
+import SearchBar from "./searchBar";
 
 function Messages() {
   const user = useContext(currentUser) as iCurrentUserContext;
@@ -17,7 +18,7 @@ function Messages() {
   const friends = user?.allUser?.response?.allUser as iUser[];
   return (
     <section className="bg-slate-900" key={"message"}>
-      <Searchbar />
+      <SearchBar placeholder="Search users" for='user'/>
       <div className="relative h-[90vh] overflow-y-scroll" key={"hell"}>
         <div
           className=" inline-flex flex-col justify-center w-full"
@@ -41,24 +42,6 @@ function Messages() {
   );
 }
 
-const Searchbar = memo(function Searchbar() {
-  return (
-    <div className="flex justify-center w-full p-6 z-10 h-[10vh]">
-      <div className="inline-flex items-center gap-2 px-3 bg-slate-700 text-white rounded-md w-full">
-        <span>
-          <Search size={16} />
-        </span>
-        <span className="w-full">
-          <input
-            type="search"
-            placeholder="Search messages"
-            className="bg-transparent outline-none w-full"
-          />
-        </span>
-      </div>
-    </div>
-  );
-});
 
 type iFriendProps = {
   name: string;
@@ -75,7 +58,11 @@ const Friend = memo(function Friend(props: iFriendProps) {
       onClick={() => {
         openChat?.setUniqueUserId(props.UniqueUserID);
       }}
-      className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white transition rounded-md ${openChat?.currentUniqueUserId===props?.UniqueUserID?"bg-slate-800":'hover:bg-slate-700 '}`}
+      className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white transition rounded-md ${
+        openChat?.currentUniqueUserId === props?.UniqueUserID
+          ? "bg-slate-800"
+          : "hover:bg-slate-700 "
+      }`}
     >
       <span
         key={"user_avatar"}
@@ -83,7 +70,10 @@ const Friend = memo(function Friend(props: iFriendProps) {
       >
         <User />
       </span>
-      <span className="flex flex-col w-full border-y p-2 border-slate-800 " key={"user_details"}>
+      <span
+        className="flex flex-col w-full border-y p-2 border-slate-800 "
+        key={"user_details"}
+      >
         <span className="flex justify-between">
           <h1>{props.name}</h1>
           <h3 className="opacity-75 text-xs">@{props.username}</h3>
@@ -92,8 +82,7 @@ const Friend = memo(function Friend(props: iFriendProps) {
           className="flex justify-between items-end text-slate-400 text-sm"
           key={"last_Chat_detail"}
         >
-          {openChat?.typing &&
-          openChat?.typing[props.UniqueUserID] ? (
+          {openChat?.typing && openChat?.typing[props.UniqueUserID] ? (
             <h6 className="text-xs text-green-500 font-semibold transition-all">
               typing...
             </h6>

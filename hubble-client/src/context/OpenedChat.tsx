@@ -2,7 +2,6 @@
 import { createContext, useEffect, useState } from "react";
 import { iUser } from "../types/user";
 import useGetData from "../hooks/axios/getData";
-import { useCookies } from "react-cookie";
 
 type icurrentUserChats = {
   type: string;
@@ -38,16 +37,11 @@ export function OpenChatProvider({ children }: { children: React.ReactNode }) {
     useState<icurrentUserChats[]>();
   const [currentUserOnline, setCurrentUserOnline] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
-  const [cookies] = useCookies();
-  const headerOptions={
-    headers: {
-      authorization: cookies["auth"],
-    },
-  }
-  const getChatsonDB = useGetData("/chat/all", headerOptions,true);
+
+  const getChatsonDB = useGetData("/chat/all", {},true);
   const getUser = useGetData(
     `/user?id=${currentUniqueUserId}`,
-    headerOptions,
+    {},
     true,
     [currentUniqueUserId]
   );

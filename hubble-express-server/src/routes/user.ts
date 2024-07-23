@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getUser,
+  getUserSearchResult,
   getUsersinBulk,
   getUserVerification,
 } from "../controllers/user";
@@ -14,6 +15,7 @@ router.use(authorizationHeader)
 router.get("/", getUser);
 router.get("/bulk", getUsersinBulk);
 router.get("/verify", getUserVerification);
+router.get("/search", getUserSearchResult);
 
-// export default router;
+
 module.exports = router;
