@@ -25,11 +25,61 @@ export function sendMessageToSpecific(data: any, socketID: string) {
   });
 }
 
+async function updateReadChatsInDB(id: string, to: string, chats: any) {
+  try {
+    const userchats = await prisma.user.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        myChats: true,
+      },
+    });
+    const chatID =
+      userchats?.myChats &&
+      userchats.myChats[to as keyof typeof userchats.myChats];
+    if (!chatID) {
+      return console.log("No chat id found");
+    }
+    const chats_on_DB = await prisma.chat.findFirst({
+      where: {
+        id: chatID,
+      },
+    });
+    if (!chats_on_DB) {
+      return console.log("No chats found on DB");
+    }
+    let updated_messages = (chats_on_DB?.messages as Prisma.JsonArray).map(
+      (message: any) => {
+        if (
+          new Date(message?.time) <= new Date(chats?.time) &&
+          message?.status == "unread" && message?.to==id
+        ) {
+          return { ...message, status: "read" };
+        }
+        return message;
+      }
+    );
+    
+    await prisma.chat.update({
+      where:{
+        id:chats_on_DB.id
+      },
+      data:{
+        messages:updated_messages
+      }
+    })
+  } catch (error) {
+    console.log("Error from updateReadChatsInDB:", error);
+  }
+}
+
 async function updateChatsInDB(
   to: string,
   from: string,
   message: string,
-  time: Date
+  time: Date,
+  status: string
 ) {
   try {
     if (to == from) {
@@ -68,8 +118,8 @@ async function updateChatsInDB(
         },
         data: {
           messages: new_messages
-            ? [...new_messages, { to, from, message, time }]
-            : [{ to, from, message, time }],
+            ? [...new_messages, { to, from, message, time, status }]
+            : [{ to, from, message, time, status }],
         },
       });
       if (!updated_chats) {
@@ -85,6 +135,7 @@ async function updateChatsInDB(
               from,
               message,
               time,
+              status,
             },
           ],
         },
@@ -177,7 +228,8 @@ export function message(data: { event: string; payload: any }, ws: iwebsocket) {
             data?.payload?.to,
             data?.payload?.from,
             data?.payload?.message,
-            data?.payload?.time || new Date()
+            data?.payload?.time || new Date(),
+            data?.payload?.status
           );
           socketIdtoDBuserID.forEach((value, key, map) => {
             if (value == data?.payload?.to) {
@@ -188,12 +240,38 @@ export function message(data: { event: string; payload: any }, ws: iwebsocket) {
                     from: data?.payload?.from,
                     message: data?.payload?.message,
                     time: data?.payload?.time || new Date(),
+                    status: data?.payload?.status,
                   },
                 },
                 key
               );
             }
           });
+        }
+        break;
+      //
+      //
+      case "message-read":
+        if (
+          data?.payload?.id &&
+          data?.payload?.chat?.message &&
+          data?.payload?.chat?.time
+        ) {
+          updateReadChatsInDB(
+            socketIdtoDBuserID.get(ws?.id),
+            data?.payload?.id,
+            data?.payload?.chat
+          );
+          sendMessageToSpecific(
+            {
+              event: "message-read-recieved",
+              payload: {
+                id: socketIdtoDBuserID.get(ws?.id),
+                chat: data?.payload?.chat,
+              },
+            },
+            onlineUser.get(data?.payload?.id)
+          );
         }
         break;
       //

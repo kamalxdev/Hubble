@@ -47,6 +47,7 @@ export async function getAllChats(req: Request, res: Response) {
             type: chat_with_user == m?.to ? "reciever" : "sender",
             message: m?.message,
             time: m?.time,
+            status:m?.status
           };
         })
         userchats=userchats?{...userchats,[chat_with_user]: chat_with_user_messages}:{[chat_with_user]: chat_with_user_messages}

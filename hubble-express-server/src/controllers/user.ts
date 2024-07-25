@@ -68,3 +68,20 @@ export async function getUserSearchResult(req: Request, res: Response){
     return res.json({ success: false, error: "Internal Server Error" });
   }
 }
+
+
+export async function getUserFriends(req: Request, res: Response){
+  try {
+    const user=res.locals.user;
+    const allUsers=await client.get('users')
+    // const friends=JSON.parse(allUsers as string).filter((u:User)=>)
+    const friends= user?.myChats? Object.entries(user?.myChats).map((c)=>JSON.parse(allUsers as string).filter((f:User)=>c[0]==f.id)):[]
+    return res.json({ success: true, friends});
+
+    
+  } catch (error) {
+    console.log("Error on getUserFriends: ", error);
+
+    return res.json({ success: false, error: "Internal Server Error" });
+  }
+}

@@ -9,39 +9,42 @@ import SearchBar from "./searchBar";
 function Messages() {
   const user = useContext(currentUser) as iCurrentUserContext;
 
-  if (user.currentuser.loading || user.allUser.loading) {
+  if (user.currentuser.loading || user.friends.loading) {
     return <MessagesLoader />;
   }
-  if (!user.allUser.response.success) {
-    return <div>{user.allUser.error}</div>;
+  if (!user.friends.response.success) {
+    return <div>{user.friends.error}</div>;
   }
-  const friends = user?.allUser?.response?.allUser as iUser[];
+  const friends = user?.friends?.response?.friends as iUser[][];
   return (
     <section className="bg-slate-900" key={"message"}>
-      <SearchBar placeholder="Search users" for='user'/>
+      <SearchBar placeholder="Search users" for="user" />
       <div className="relative h-[90vh] overflow-y-scroll" key={"hell"}>
         <div
           className=" inline-flex flex-col justify-center w-full"
           key={"friends"}
         >
-          {friends.map((friend) => {
-            return (
-              <Fragment key={friend.id}>
+          {friends.length >= 1 ? (
+            friends.map((friend) => (
+              <Fragment key={friend[0].id}>
                 <Friend
-                  name={friend.name}
-                  UniqueUserID={friend.id}
-                  key={friend.username}
-                  username={friend?.username}
+                  name={friend[0].name}
+                  UniqueUserID={friend[0].id}
+                  key={friend[0].username}
+                  username={friend[0]?.username}
                 />
               </Fragment>
-            );
-          })}
+            ))
+          ) : (
+            <div className="flex w-full items-center justify-center text-white opacity-50">
+              No messages
+            </div>
+          )}
         </div>
       </div>
     </section>
   );
 }
-
 
 type iFriendProps = {
   name: string;
@@ -51,6 +54,13 @@ type iFriendProps = {
 
 const Friend = memo(function Friend(props: iFriendProps) {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
+  var unread_Message_Count: number = 0;
+  openChat?.allUserChats &&
+    openChat?.allUserChats[props.UniqueUserID]?.map((chat) => {
+      if (chat.type=='sender' &&chat?.status == "unread") {
+        unread_Message_Count++;
+      }
+    });
 
   return (
     <button
@@ -75,7 +85,18 @@ const Friend = memo(function Friend(props: iFriendProps) {
         key={"user_details"}
       >
         <span className="flex justify-between">
-          <h1>{props.name}</h1>
+          <span className="inline-flex items-center gap-2">
+            <h1>{props.name}</h1>{" "}
+            {unread_Message_Count > 0 && (
+              <span className="text-[0.65rem] text-slate-900 rounded-full bg-green-500 w-5 h-5 font-bold flex items-center justify-center">
+                {unread_Message_Count > 99 ? (
+                  <p>99+</p>
+                ) : (
+                  <p>{unread_Message_Count}</p>
+                )}
+              </span>
+            )}
+          </span>
           <h3 className="opacity-75 text-xs">@{props.username}</h3>
         </span>
         <span
@@ -104,7 +125,7 @@ const Friend = memo(function Friend(props: iFriendProps) {
                   : "No message"}
               </p>
 
-              <p className="text-xs">
+              <p className={`text-xs ${unread_Message_Count > 0 && "text-green-500"}`}>
                 {openChat?.allUserChats &&
                 openChat?.allUserChats[props.UniqueUserID]
                   ? new Date(

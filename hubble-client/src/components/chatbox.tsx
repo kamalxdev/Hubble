@@ -1,14 +1,27 @@
-import { EllipsisVertical, Phone, Send, User, Video } from "lucide-react";
+import {
+  CheckCheck,
+  EllipsisVertical,
+  Phone,
+  Send,
+  User,
+  Video,
+} from "lucide-react";
 import { memo, useContext, useEffect, useRef, useState } from "react";
-import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
+import {
+  icurrentUserChats,
+  iOpenChatValue,
+  OpenChatContext,
+} from "../context/OpenedChat";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import { Link } from "react-router-dom";
 import { socketContext } from "../context/socket";
 import ChatBoxLoader from "../loader/chatbox";
-import {iwebRTCcontext, webRTCcontext } from "../context/webRTC";
+import { iwebRTCcontext, webRTCcontext } from "../context/webRTC";
 
 function ChatBox() {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
+  const socket = useContext(socketContext) as WebSocket;
+
   const divref = useRef(null);
 
   useEffect(() => {
@@ -16,20 +29,53 @@ function ChatBox() {
       (divref?.current as HTMLElement)?.scrollIntoView({ behavior: "smooth" });
     }
   });
-  
+  useEffect(() => {
+    // marking chat as read
+    if (!openChat?.loading) {
+      const chatupdated: icurrentUserChats[] =
+        openChat?.allUserChats &&
+        openChat?.allUserChats[openChat?.currentUniqueUserId]?.map((chat) => {
+          if (chat?.type == "sender" && chat?.status == "unread") {
+            return { ...chat, status: "read" };
+          }
+          return chat;
+        });
+
+      openChat?.setAllUserChats({
+        ...openChat?.allUserChats,
+        [openChat?.currentUniqueUserId]: chatupdated,
+      });
+      
+      openChat?.allUserChats && socket.send(
+        JSON.stringify({
+          event: "message-read",
+          payload: {
+            id: openChat?.currentUniqueUserId,
+            chat: openChat?.allUserChats[openChat?.currentUniqueUserId][
+              openChat?.allUserChats[openChat?.currentUniqueUserId]?.length - 1
+            ]
+          },
+        })
+      );
+    }
+  }, [openChat?.loading]);
   if (!openChat.currentUniqueUserId) {
-    return <div className="bg-slate-950 w-full h-full flex justify-center items-center text-white"><p className="opacity-30">Select a chat to view messages</p></div>;
+    return (
+      <div className="bg-slate-950 w-full h-full flex justify-center items-center text-white">
+        <p className="opacity-30">Select a chat to view messages</p>
+      </div>
+    );
   }
   if (openChat?.loading) {
     return <ChatBoxLoader />;
   }
+
   let currentDate: Date;
   return (
     <section className="flex flex-col justify-between transition overflow-hidden bg-slate-950">
       <ChatTopBar />
       <div className="relative h-[86vh] overflow-hidden overflow-y-scroll ">
         <div className="inline-flex flex-col gap-5 w-full py-5 px-10 overflow-hidden  ">
-
           {openChat?.currentUserChats?.map((chat, index) => {
             let chatDate = new Date(chat?.time);
 
@@ -41,6 +87,7 @@ function ChatBox() {
                   key={index}
                   message={chat.message}
                   time={chatDate}
+                  status={chat.status}
                   showDate
                 />
               );
@@ -56,6 +103,7 @@ function ChatBox() {
                   key={index}
                   message={chat.message}
                   time={chatDate}
+                  status={chat.status}
                   showDate
                 />
               );
@@ -65,6 +113,7 @@ function ChatBox() {
                   from={chat.type as "sender" | "reciever"}
                   key={index}
                   message={chat.message}
+                  status={chat.status}
                   time={chatDate}
                 />
               );
@@ -84,18 +133,21 @@ const ChatTopBar = memo(function ChatTopBar() {
   const socket = useContext(socketContext) as WebSocket;
   function handleCreateCall(type: string) {
     navigator.mediaDevices
-    .getUserMedia({ video: true, audio: true })
-    .then( () => {
-      webRTC?.setCall({ ...webRTC?.call,
-        user: { id: openChat.currentUniqueUserId },
-        type,
-        answered: false,
-        Useris:'sender'
-      })
-      socket.send(JSON.stringify({event:'call-user',payload:{id: openChat.currentUniqueUserId,type}}))
-        
-        
-        
+      .getUserMedia({ video: true, audio: true })
+      .then(() => {
+        webRTC?.setCall({
+          ...webRTC?.call,
+          user: { id: openChat.currentUniqueUserId },
+          type,
+          answered: false,
+          Useris: "sender",
+        });
+        socket.send(
+          JSON.stringify({
+            event: "call-user",
+            payload: { id: openChat.currentUniqueUserId, type },
+          })
+        );
       });
   }
   const topBarLeftStyling = "hover:bg-slate-700 transition p-3 rounded-md ";
@@ -165,6 +217,7 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
           from: user?.currentuser?.response?.user?.id,
           message,
           time,
+          status: "unread",
         },
       })
     );
@@ -173,13 +226,13 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
         ...openChat?.allUserChats,
         [id]: [
           ...openChat?.allUserChats[id],
-          { type: "reciever", message, time },
+          { type: "reciever", message, time, status: "unread" },
         ],
       });
     } else {
       openChat.setAllUserChats({
         ...openChat?.allUserChats,
-        [id]: [{ type: "reciever", message, time }],
+        [id]: [{ type: "reciever", message, time, status: "unread" }],
       });
     }
 
@@ -193,18 +246,17 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
         autoCorrect="on"
         // autoComplete="on"
         onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={(e) =>
-          e.key == "Enter"
-            ? handleSendMessage()
-            : socket.send(
-                JSON.stringify({
-                  event: "message-send-start-typing",
-                  payload: {
-                    to: id,
-                    from: user?.currentuser?.response?.user?.id,
-                  },
-                })
-              )
+        onKeyDown={(e) => e.key == "Enter" && handleSendMessage()}
+        onInput={() =>
+          socket.send(
+            JSON.stringify({
+              event: "message-send-start-typing",
+              payload: {
+                to: id,
+                from: user?.currentuser?.response?.user?.id,
+              },
+            })
+          )
         }
         className="outline-none w-full shadow-inner px-5 py-2 text-lg rounded-md bg-slate-700 "
         placeholder="Type a message..."
@@ -224,6 +276,7 @@ type iChatProps = {
   from: "sender" | "reciever";
   message: string;
   time: Date;
+  status?: "read" | "unread";
   showDate?: boolean;
 };
 
@@ -243,8 +296,8 @@ const Chat = memo(function Chat(props: iChatProps) {
       <div
         className={`inline-flex flex-col w-fit max-w-md md:max-w-xl px-3 rounded-md ${
           props.from == "sender"
-            ? "text-white bg-slate-700"
-            : "text-black bg-slate-200 ml-auto"
+            ? "text-black bg-white"
+            : "text-white bg-slate-700 ml-auto"
         }`}
       >
         <span
@@ -253,10 +306,17 @@ const Chat = memo(function Chat(props: iChatProps) {
         >
           {props.message}
         </span>
-        <span className="inline-flex justify-end text-xs ml-auto opacity-70">
-          {new Date(props?.time)
-            ?.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-            .toLowerCase()}
+        <span className="inline-flex justify-end text-xs ml-auto opacity-70 gap-2">
+          <p>
+            {new Date(props?.time)
+              ?.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+              .toLowerCase()}
+          </p>
+          {props?.from == "reciever" && props?.status == "read" && (
+            <p className="text-green-400 transition">
+              <CheckCheck size={16} />
+            </p>
+          )}
         </span>
       </div>
     </>

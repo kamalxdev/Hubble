@@ -1,4 +1,4 @@
-import { iOpenChatValue } from "../context/OpenedChat";
+import { icurrentUserChats, iOpenChatValue } from "../context/OpenedChat";
 import { iwebRTCcontext } from "../context/webRTC";
 
 export async function listenMessages(
@@ -56,6 +56,7 @@ export async function listenMessages(
                 type: "sender",
                 message: data?.payload?.message,
                 time: data?.payload?.time,
+                status: openChat?.currentUniqueUserId==data?.payload?.from?'read':data?.payload?.status,
               },
             ],
           });
@@ -67,8 +68,36 @@ export async function listenMessages(
                 type: "sender",
                 message: data?.payload?.message,
                 time: data?.payload?.time,
+                status: openChat?.currentUniqueUserId==data?.payload?.from?'read':data?.payload?.status,
+                
               },
             ],
+          });
+        }
+        
+        break;
+      //
+      //
+      case "message-read-recieved":
+        if (data?.payload?.id && data?.payload?.chat?.time) {
+          const chatupdated: icurrentUserChats[] =
+            openChat?.allUserChats &&
+            openChat?.allUserChats[openChat?.currentUniqueUserId]?.map(
+              (chat) => {
+                if (
+                  new Date(chat?.time) <= new Date(data?.payload?.chat?.time) &&
+                  chat?.type == "reciever" &&
+                  chat?.status == "unread"
+                ) {
+                  return { ...chat, status: "read" };
+                }
+                return chat;
+              }
+            );
+
+          openChat?.setAllUserChats({
+            ...openChat?.allUserChats,
+            [openChat?.currentUniqueUserId]: chatupdated,
           });
         }
         break;
@@ -114,7 +143,7 @@ export async function listenMessages(
         if (data?.payload?.id) {
           if (data?.payload?.accepted) {
             webRTC?.setCall({ ...webRTC?.call, answered: true });
-            webRTC?.sendVideo()
+            webRTC?.sendVideo();
           } else {
             webRTC?.setCall({});
           }
@@ -177,7 +206,7 @@ export async function listenMessages(
         if (data?.payload?.iceCandidate && data?.payload?.from) {
           if (data?.payload?.from == "reciever") {
             console.log("icecandidate set to sender");
-            
+
             await webRTC?.peer?.sender?.addIceCandidate(
               data?.payload?.iceCandidate
             );

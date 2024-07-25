@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getUser,
+  getUserFriends,
   getUserSearchResult,
   getUsersinBulk,
   getUserVerification,
@@ -16,6 +17,7 @@ router.get("/", getUser);
 router.get("/bulk", getUsersinBulk);
 router.get("/verify", getUserVerification);
 router.get("/search", getUserSearchResult);
+router.get('/friends',getUserFriends)
 
 
 module.exports = router;

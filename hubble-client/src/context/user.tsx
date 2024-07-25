@@ -4,7 +4,7 @@ import useGetData, { igetData } from "../hooks/axios/getData";
 
 export type iCurrentUserContext= {
     currentuser:igetData,
-    allUser:igetData
+    friends:igetData
 }
 
 
@@ -17,7 +17,7 @@ export const currentUser = createContext<iCurrentUserContext | {}>({})
 export function CurrentUserProvider({ children }:{children:React.ReactNode}){
     
     const cUser=useGetData(`/user/verify`,{},true);
-    const aUser=useGetData('/user/bulk',{},true);
+    const friends=useGetData('/user/friends',{},true);
     // useEffect(()=>{
     //     if(cUser.response && !cUser?.response?.success){
     //         console.log({cUser});
@@ -26,7 +26,7 @@ export function CurrentUserProvider({ children }:{children:React.ReactNode}){
     // },[cUser])
 
     
-    return <currentUser.Provider value={{currentuser:cUser,allUser:aUser}}>
+    return <currentUser.Provider value={{currentuser:cUser,friends}}>
         {children}
     </currentUser.Provider>
 }

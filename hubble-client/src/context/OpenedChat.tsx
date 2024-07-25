@@ -3,10 +3,11 @@ import { createContext, useEffect, useState } from "react";
 import { iUser } from "../types/user";
 import useGetData from "../hooks/axios/getData";
 
-type icurrentUserChats = {
+export type icurrentUserChats = {
   type: string;
   message: string;
   time: Date;
+  status?:'read'|'unread'
 };
 export type iallUserChats = { [key: string]: icurrentUserChats[] };
 export type ityping = { [key: string]: boolean };
@@ -57,7 +58,6 @@ export function OpenChatProvider({ children }: { children: React.ReactNode }) {
       setCurrentUserDetails(getUser?.response?.user);
     }
   }, [currentUniqueUserId, getUser?.response?.user]);
-
   useEffect(() => {
     setCurrentUserOnline(false);
     setLoading(true);

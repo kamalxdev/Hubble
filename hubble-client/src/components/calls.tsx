@@ -9,13 +9,13 @@ import SearchBar from "./searchBar";
 function Calls() {
   const user = useContext(currentUser) as iCurrentUserContext;
 
-  if (user.currentuser.loading || user.allUser.loading) {
+  if (user.currentuser.loading || user.friends.loading) {
     return <MessagesLoader />;
   }
-  if (!user.allUser.response.success) {
-    return <div>{user.allUser.error}</div>;
+  if (!user.friends.response.success) {
+    return <div>{user.friends.error}</div>;
   }
-  const friends = user?.allUser?.response?.allUser as iUser[];
+  const friends = user?.friends?.response?.friends as iUser[][];
   return (
     <section className="bg-slate-900" key={"message"}>
             <SearchBar placeholder="Search calls" for='call'/>
@@ -27,12 +27,12 @@ function Calls() {
         >
           {friends.map((friend) => {
             return (
-              <Fragment key={friend.id}>
+              <Fragment key={friend[0].id}>
                 <Friend
-                  name={friend.name}
-                  UniqueUserID={friend.id}
-                  key={friend.username}
-                  username={friend?.username}
+                  name={friend[0].name}
+                  UniqueUserID={friend[0].id}
+                  key={friend[0].username}
+                  username={friend[0]?.username}
                 />
               </Fragment>
             );
