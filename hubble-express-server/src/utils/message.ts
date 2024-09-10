@@ -391,19 +391,6 @@ export function message(data: { event: string; payload: any }, ws: iwebsocket) {
         }
         break;
       //
-      // // connection senders(who initiated the call) reciever connection with recievers(whom the sender called) sender connection
-      // case 'call-answered':
-      //   if(data?.payload?.id && data?.payload?.type && data?.payload?.recieverANSWER){
-      //     sendMessageToSpecific(
-      //       {
-      //         event: "call-answered-recieved",
-      //         payload: { id: socketIdtoDBuserID.get(ws?.id), recieverANSWER: data?.payload?.recieverANSWER,type:data?.payload?.type },
-      //       },
-      //       onlineUser.get(data?.payload?.id)
-      //     );
-      //   }
-      //   break;
-      // //
       //
       case "call-user-iceCandidate":
         if (
@@ -425,6 +412,23 @@ export function message(data: { event: string; payload: any }, ws: iwebsocket) {
           );
         }
         break;
+        //
+        //
+        case 'call-end':
+          if(data?.payload?.id){
+            sendMessageToSpecific(
+              {
+                event: "call-ended",
+                payload: {
+                  id: socketIdtoDBuserID.get(ws?.id),
+                  reason:'user ended the call'
+                },
+              },
+              onlineUser.get(data?.payload?.id)
+            );
+          }
+          break;
+        //
       default:
         console.log("No event found");
 

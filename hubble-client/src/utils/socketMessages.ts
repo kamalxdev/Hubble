@@ -56,7 +56,10 @@ export async function listenMessages(
                 type: "sender",
                 message: data?.payload?.message,
                 time: data?.payload?.time,
-                status: openChat?.currentUniqueUserId==data?.payload?.from?'read':data?.payload?.status,
+                status:
+                  openChat?.currentUniqueUserId == data?.payload?.from
+                    ? "read"
+                    : data?.payload?.status,
               },
             ],
           });
@@ -68,13 +71,15 @@ export async function listenMessages(
                 type: "sender",
                 message: data?.payload?.message,
                 time: data?.payload?.time,
-                status: openChat?.currentUniqueUserId==data?.payload?.from?'read':data?.payload?.status,
-                
+                status:
+                  openChat?.currentUniqueUserId == data?.payload?.from
+                    ? "read"
+                    : data?.payload?.status,
               },
             ],
           });
         }
-        
+
         break;
       //
       //
@@ -182,25 +187,6 @@ export async function listenMessages(
 
         break;
       //
-      // // reciever part:
-      // case "call-answered-recieved":
-      //   if (
-      //     data?.payload?.id &&
-      //     data?.payload?.recieverANSWER &&
-      //     data?.payload?.type
-      //   ) {
-      //     await webRTC?.peer?.sender?.setRemoteDescription(
-      //       data?.payload?.recieverANSWER
-      //     );
-      //     await webRTC?.peer?.sender?.addIceCandidate(
-      //       webRTC?.call?.iceCandidate
-      //     );
-      //     await webRTC?.peer?.reciever?.addIceCandidate(
-      //       webRTC?.call?.iceCandidate
-      //     );
-      //   }
-      //   break;
-      // //
       //
       case "call-user-iceCandidate-recieved":
         if (data?.payload?.iceCandidate && data?.payload?.from) {
@@ -218,6 +204,19 @@ export async function listenMessages(
               data?.payload?.iceCandidate
             );
           }
+        }
+        break;
+      //
+      //
+      case "call-ended":
+        if (data?.payload?.id) {
+          webRTC?.setCall({});
+          webRTC?.peer?.sender?.close();
+          webRTC?.peer?.reciever?.close();
+          webRTC?.setPeer({
+            sender: new RTCPeerConnection(),
+            reciever: new RTCPeerConnection(),
+          });
         }
         break;
       //

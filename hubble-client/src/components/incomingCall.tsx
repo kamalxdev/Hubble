@@ -23,19 +23,21 @@ function IncomingCall() {
     audio.loop = true;
     audio.play();
   }
-
   const callTimeout=setTimeout(()=>{
     audio.pause();
-    webRTC?.setCall({})
+    if(!webRTC?.call?.answered){
+      webRTC?.setCall({})
     socket.send(JSON.stringify({event:'call-user-answer',payload:{id:webRTC?.call?.user?.id,accepted:false,type:webRTC?.call?.type}}))
+    }
   },10000)
+
   useEffect(()=>{
     return () => {
       audio.pause();
       audio.remove();
       clearTimeout(callTimeout)
     };
-  },[])
+  },[callTimeout])
 
 
   // function to handle call answer

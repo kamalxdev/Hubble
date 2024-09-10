@@ -1,30 +1,65 @@
-import { Maximize, MicOff, Phone, VideoOff } from "lucide-react";
-import { memo, useContext, useEffect, useRef } from "react";
+import { Maximize, Mic, MicOff, Phone, Video, VideoOff } from "lucide-react";
+import { memo, useContext, useEffect, useRef, useState } from "react";
 import { iwebRTCcontext, webRTCcontext } from "../context/webRTC";
+import { socketContext } from "../context/socket";
 
 function PhoneBox() {
   const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
+  const socket = useContext(socketContext) as WebSocket;
+  const [togglebtn,setToggleBtn]=useState({
+    audio:true,
+    video:true
+  })
+
+  function handleEndCall(){
+    webRTC?.peer?.sender?.close();
+    webRTC?.peer?.reciever?.close();
+    webRTC?.setPeer({sender:new RTCPeerConnection(),reciever:new RTCPeerConnection()})
+    socket.send(JSON.stringify({event:'call-end',payload:{id:webRTC?.call?.user?.id}}));
+    webRTC?.setCall({})
+  }
+  function handleToggleMic(){
+    if(webRTC?.peer?.sender?.getSenders()[1]?.track?.kind=='audio'){
+      (webRTC.peer.sender.getSenders()[1].track as MediaStreamTrack).enabled =!webRTC?.peer?.sender?.getSenders()[1]?.track?.enabled
+    }else if(webRTC?.peer?.sender?.getSenders()[0]?.track?.kind=='audio'){
+      ((webRTC.peer.sender as RTCPeerConnection).getSenders()[0].track as MediaStreamTrack).enabled =!webRTC?.peer?.sender?.getSenders()[0]?.track?.enabled 
+    }
+    setToggleBtn({...togglebtn,audio:!togglebtn.audio})
+    console.log("audio: ", webRTC?.peer?.sender?.getSenders()[0].track?.enabled);
+    
+  }
+  async function handleToggleVideo(){
+      if(webRTC?.peer?.sender?.getSenders()[1]?.track?.kind=='video'){
+        (webRTC.peer.sender.getSenders()[1].track as MediaStreamTrack).enabled =!webRTC?.peer?.sender?.getSenders()[1]?.track?.enabled
+      }else if(webRTC?.peer?.sender?.getSenders()[0]?.track?.kind=='video'){
+        ((webRTC.peer.sender as RTCPeerConnection).getSenders()[0].track as MediaStreamTrack).enabled =!webRTC?.peer?.sender?.getSenders()[0]?.track?.enabled 
+      }
+      setToggleBtn({...togglebtn,video:!togglebtn.video})
+  }
   if(!webRTC?.call?.user?.id){
-    return <div className="bg-slate-950 w-full h-full flex justify-center items-center text-white"></div>;
+    return <div className="bg-slate-950 w-full h-full flex justify-center items-center text-white text-opacity-20">Your video call will be visible here</div>;
   }
   return (
     <div className="w-full h-full bg-slate-950 ">
-      <VideoCall />
+      <VideoCall/>
       <div className="absolute w-full h-full top-0 z-40 flex flex-col items-center justify-end pb-5">
         <div className="bg-slate-800 flex gap-3 w-auto pr-7 pl-5 py-2 rounded-md ">
           <button
             type="button"
             className="text-white p-3 rounded-md transition hover:bg-slate-700"
             title="Mic off"
+            onClick={handleToggleMic}
           >
-            <MicOff size={20}/>
+            {togglebtn?.audio ? <MicOff size={20}/>: <Mic  size={20}/>}
+
           </button>
           <button
             type="button"
             className="text-white p-3 rounded-md hover:bg-slate-700 transition"
             title="Video off"
+            onClick={handleToggleVideo}
           >
-            <VideoOff size={20}/>
+            {togglebtn?.video ? <VideoOff size={20}/>: <Video  size={20}/>}
           </button>
           <button
             type="button"
@@ -37,6 +72,7 @@ function PhoneBox() {
             type="button"
             className="bg-red-600 text-white p-3 rounded-md hover:bg-red-700 transition"
             title="End call"
+            onClick={handleEndCall}
           >
             <Phone className="origin-center rotate-[138deg]" size={20} />
           </button>
@@ -46,15 +82,13 @@ function PhoneBox() {
   );
 }
 
-// const VoiceCall = memo(function VoiceCall() {
-//   return <div></div>;
-// });
 
 const VideoCall = memo(function VideoCall() {
   const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
 
   const another_user_video = useRef<HTMLVideoElement>(null);
   const current_user_video = useRef<HTMLVideoElement>(null);
+  const another_user_mic=useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
     navigator.mediaDevices
@@ -77,10 +111,13 @@ const VideoCall = memo(function VideoCall() {
       if (webRTC?.peer?.reciever) {
         const track1= webRTC?.peer?.reciever?.getTransceivers()[0]?.receiver?.track
         const track2= webRTC?.peer?.reciever?.getTransceivers()[1]?.receiver?.track
-
-          if (another_user_video?.current) {
-            
-            another_user_video.current.srcObject = new MediaStream([track1,track2]);
+          
+          if (another_user_video?.current && another_user_mic.current) {
+            const another_user_audio=new Audio()
+            another_user_audio.srcObject=new MediaStream([track1])
+            another_user_audio.play()
+            another_user_mic.current.srcObject=new MediaStream([track1])
+            another_user_video.current.srcObject = new MediaStream([track2]);
           }
       }
     }, 5000);
@@ -93,8 +130,9 @@ const VideoCall = memo(function VideoCall() {
           ref={another_user_video}
           className="w-full h-full rounded-md "
         ></video>
+        <audio ref={another_user_mic} className="hidden" autoPlay></audio>
       </div>
-      <div className="absolute w-2/12 h-auto z-40 bottom-20 right-20">
+      <div className="absolute w-2/12 h-auto z-40 bottom-20 right-20 drop-shadow-2xl">
         <video
           autoPlay
           ref={current_user_video}
