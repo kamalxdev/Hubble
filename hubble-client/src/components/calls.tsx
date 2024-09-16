@@ -1,24 +1,16 @@
-import { Ban, Dot, PhoneIncoming, PhoneOutgoing, User } from "lucide-react";
+import { Dot, PhoneIncoming, PhoneOutgoing, User } from "lucide-react";
 import { Fragment, memo, useContext } from "react";
-import { currentUser, iCurrentUserContext } from "../context/user";
 import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
-import { iUser } from "../types/user";
-import MessagesLoader from "../loader/messages";
 import SearchBar from "./searchBar";
+import { callContext, iCallContext } from "../context/calls";
 
 function Calls() {
-  const user = useContext(currentUser) as iCurrentUserContext;
+  const call = useContext(callContext) as iCallContext;
 
-  if (user.currentuser.loading || user.friends.loading) {
-    return <MessagesLoader />;
-  }
-  if (!user.friends.response.success) {
-    return <div>{user.friends.error}</div>;
-  }
-  const friends = user?.friends?.response?.friends as iUser[][];
+  const friends = call?.history;
   return (
     <section className="bg-slate-900" key={"message"}>
-            <SearchBar placeholder="Search calls" for='call'/>
+      <SearchBar placeholder="Search calls" for="call" />
 
       <div className="relative h-[90vh] overflow-y-scroll" key={"hell"}>
         <div
@@ -27,12 +19,16 @@ function Calls() {
         >
           {friends.map((friend) => {
             return (
-              <Fragment key={friend[0].id}>
+              <Fragment key={friend?.call?.id}>
                 <Friend
-                  name={friend[0].name}
-                  UniqueUserID={friend[0].id}
-                  key={friend[0].username}
-                  username={friend[0]?.username}
+                  name={friend?.user?.name}
+                  UniqueUserID={friend?.user?.id}
+                  key={friend?.user?.username}
+                  username={friend?.user?.username}
+                  type={friend?.call?.type}
+                  time={friend?.call?.createdAt}
+                  accepted={friend?.call?.answer}
+                  incoming={friend?.call?.incoming}
                 />
               </Fragment>
             );
@@ -47,6 +43,10 @@ type iFriendProps = {
   name: string;
   UniqueUserID: string;
   username: string;
+  type: string;
+  time: Date;
+  accepted: Boolean;
+  incoming: Boolean;
 };
 
 const Friend = memo(function Friend(props: iFriendProps) {
@@ -58,7 +58,9 @@ const Friend = memo(function Friend(props: iFriendProps) {
       // onClick={() => {
       //   openChat?.setUniqueUserId(props.UniqueUserID);
       // }}
-      className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white hover:bg-slate-600/50 transition rounded-md ${openChat?.currentUniqueUserId===props?.UniqueUserID && "bg-slate-600"}`}
+      className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white hover:bg-slate-600/50 transition rounded-md ${
+        openChat?.currentUniqueUserId === props?.UniqueUserID && "bg-slate-600"
+      }`}
     >
       <span
         key={"user_avatar"}
@@ -66,19 +68,43 @@ const Friend = memo(function Friend(props: iFriendProps) {
       >
         <User />
       </span>
-      <span className="flex flex-col w-full border-y p-2 border-slate-800 " key={"user_details"}>
+      <span
+        className="flex flex-col w-full border-y p-2 border-slate-800 "
+        key={"user_details"}
+      >
         <span className="flex justify-between">
           <h1>{props.name}</h1>
           <h3 className="opacity-75 text-xs">@{props.username}</h3>
         </span>
-        <span
-          className="flex justify-between items-end text-slate-400 text-sm"
-        >
-          
-          <span className="flex gap-2 text-green-500">
-          <p className="font-semibold">voice</p><Dot size={20} className="text-slate-600"/><PhoneIncoming size={16} /><Ban size={16}/><PhoneOutgoing size={16}/>
+        <span className="flex justify-between items-end text-slate-400 text-sm">
+          <span
+            className={`flex gap-2 ${
+              props.accepted ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            <p className="font-semibold">{props?.type}</p>
+            <Dot size={20} className="text-slate-600" />
+            {props.incoming ? (
+              <PhoneIncoming size={16} />
+            ) : (
+              <PhoneOutgoing size={16} />
+            )}
+            {/* <Ban size={16} /> */}
           </span>
-          <p>09:35am</p>
+          <p className="text-xs">
+            {new Date().toLocaleDateString() == new Date(props?.time).toLocaleDateString()
+              ? "Today at " + new Date(props?.time).toLocaleString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+              : new Date(props?.time).toLocaleString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+          </p>
         </span>
       </span>
     </button>

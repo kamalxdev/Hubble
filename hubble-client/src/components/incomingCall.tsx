@@ -45,14 +45,14 @@ function IncomingCall() {
     audio.pause();
     // streaming media from reciever side
     webRTC?.sendVideo()
-    socket.send(JSON.stringify({event:'call-user-answer',payload:{id:webRTC?.call?.user?.id,accepted:true,type:webRTC?.call?.type}}))
+    socket.send(JSON.stringify({event:'call-user-answer',payload:{id:webRTC?.call?.user?.id,accepted:true,type:webRTC?.call?.type,callID:webRTC?.call?.callID}}))
   }
 
   // function to handle call rejection
   function handleRejectCall() {
     audio.pause();
     webRTC?.setCall({})
-    socket.send(JSON.stringify({event:'call-user-answer',payload:{id:webRTC?.call?.user?.id,accepted:false,type:webRTC?.call?.type}}))
+    socket.send(JSON.stringify({event:'call-user-answer',payload:{id:webRTC?.call?.user?.id,accepted:false,type:webRTC?.call?.type,callID:webRTC?.call?.callID}}))
   }
 
   // useEffect(() => {

@@ -2,7 +2,8 @@ import {iwebsocket, iwebsocketServer} from './types/ws'
 // import {wss} from './index'
 import generateSocketID from './lib/generateSocketId'
 import {onlineUser, socketIDtoWebsocket, socketIdtoDBuserID} from './lib/user'
-import {message, sendMessageToAll} from './utils/message'
+import {message} from './utils/message'
+import { sendMessageToAll } from './utils/chats';
 
 
 

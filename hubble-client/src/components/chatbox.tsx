@@ -46,7 +46,7 @@ function ChatBox() {
         [openChat?.currentUniqueUserId]: chatupdated,
       });
   
-      const last_message=openChat?.allUserChats && openChat?.allUserChats[openChat?.currentUniqueUserId][openChat?.allUserChats[openChat?.currentUniqueUserId]?.length - 1]
+      const last_message=openChat?.allUserChats && openChat?.allUserChats[openChat?.currentUniqueUserId] && openChat?.allUserChats[openChat?.currentUniqueUserId][openChat?.allUserChats[openChat?.currentUniqueUserId]?.length - 1]
       if(last_message && last_message?.type=="sender" && last_message?.status=="unread"){
 
         socket.send(
@@ -288,10 +288,10 @@ const Chat = memo(function Chat(props: iChatProps) {
       {props.showDate && (
         <div className="w-full flex justify-center">
           <span className="text-white bg-slate-800 w-fit rounded-sm text-xs py-1 px-3 ">
-            {new Date()?.toJSON().slice(0, 10).replace(/-/g, "/") ==
-            new Date(props?.time)?.toJSON().slice(0, 10).replace(/-/g, "/")
+            {new Date()?.toLocaleDateString() ==
+            new Date(props?.time)?.toLocaleDateString()
               ? "Today"
-              : new Date(props?.time)?.toJSON().slice(0, 10).replace(/-/g, "/")}
+              : new Date(props?.time)?.toDateString()}
           </span>
         </div>
       )}

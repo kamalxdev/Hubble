@@ -10,6 +10,6 @@ export async function startPrisma(){
         await prisma.$connect()
         console.log("Connected to prisma");
     } catch (error) {
-        console.log("error on connectiong to prisma",error);
+        console.log("error on connecting to prisma",error);
     }
 }

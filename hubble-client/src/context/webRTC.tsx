@@ -6,7 +6,7 @@ export type iwebRTCcontext = {
   setCall: (x: iCall | {}) => void;
   call: iCall;
   setPeer: (x: iPeer) => void;
-  sendVideo:()=>void
+  sendVideo:()=>void;
 };
 export type iPeer = {
   sender: RTCPeerConnection | null;
@@ -24,6 +24,7 @@ export type iCall = {
   type: string;
   Useris: "sender" | "reciever";
   answered: boolean;
+  callID?:string
 };
 
 export const webRTCcontext = createContext<iwebRTCcontext | {}>({});

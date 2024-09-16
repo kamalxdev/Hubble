@@ -29,6 +29,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth", require("./routes/auth"));
 app.use("/api/v1/user", require("./routes/user"));
 app.use("/api/v1/chat", require("./routes/chat"));
+app.use("/api/v1/call", require("./routes/call"));
+
 
 
 

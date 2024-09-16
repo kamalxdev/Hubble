@@ -132,13 +132,14 @@ export async function listenMessages(
       //
       // reciever side: reciever gets call from sender(who initiated the call)
       case "call-user-recieved":
-        if (data?.payload?.id && data?.payload?.type) {
+        if (data?.payload?.id && data?.payload?.type && data?.payload?.callID) {
           webRTC?.setCall({
             ...webRTC?.call,
             user: { id: data?.payload?.id },
             type: data?.payload?.type,
             Useris: "reciever",
             answered: false,
+            callID:data?.payload?.callID
           });
         }
         break;
