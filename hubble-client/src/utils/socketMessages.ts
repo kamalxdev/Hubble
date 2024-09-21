@@ -149,7 +149,7 @@ export async function listenMessages(
         if (data?.payload?.id) {
           if (data?.payload?.accepted) {
             webRTC?.setCall({ ...webRTC?.call, answered: true });
-            webRTC?.sendVideo();
+            webRTC?.sendData(data?.payload?.type);
           } else {
             webRTC?.setCall({});
           }

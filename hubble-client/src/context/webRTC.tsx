@@ -6,7 +6,7 @@ export type iwebRTCcontext = {
   setCall: (x: iCall | {}) => void;
   call: iCall;
   setPeer: (x: iPeer) => void;
-  sendVideo:()=>void;
+  sendData:(type:string)=>void;
 };
 export type iPeer = {
   sender: RTCPeerConnection | null;
@@ -41,11 +41,8 @@ export function WebRTCcontextProvider({
     sender: null,
     reciever: null,
   });
-  // useEffect(() => {
-  //   console.log("call from rtc:", call);
-  // });
+  
   useEffect(()=>{
-    // if(peer?.sender && !peer?.sender?.remoteDescription){sendVideo()}
     if(!peer?.sender){
       setPeer({...peer,
         sender: new RTCPeerConnection()
@@ -57,16 +54,13 @@ export function WebRTCcontextProvider({
       })
     }
   },[peer])
-  function sendVideo() {
+  function sendData(type:string) {
     if(peer?.sender){
       navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
+      .getUserMedia({ video: type=='video', audio: true })
       .then((stream) => {
         peer?.sender?.addTrack(stream.getAudioTracks()[0]);
-        peer?.sender?.addTrack(stream.getVideoTracks()[0]);
-        // stream.getTracks().forEach((track) => {
-        //   peer?.sender?.addTrack(track);
-        // });
+        type == "video" && peer?.sender?.addTrack(stream.getVideoTracks()[0]);
       });
     }
   }
@@ -120,7 +114,7 @@ export function WebRTCcontextProvider({
   }
 
   return (
-    <webRTCcontext.Provider value={{ peer, call, setCall, setPeer ,sendVideo}}>
+    <webRTCcontext.Provider value={{ peer, call, setCall, setPeer ,sendData}}>
       {children}
     </webRTCcontext.Provider>
   );

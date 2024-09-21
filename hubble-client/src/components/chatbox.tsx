@@ -136,7 +136,7 @@ const ChatTopBar = memo(function ChatTopBar() {
   const socket = useContext(socketContext) as WebSocket;
   function handleCreateCall(type: string) {
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
+      .getUserMedia({ video: type=="video", audio: true })
       .then(() => {
         webRTC?.setCall({
           ...webRTC?.call,

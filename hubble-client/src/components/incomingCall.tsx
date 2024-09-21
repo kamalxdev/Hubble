@@ -42,11 +42,11 @@ function IncomingCall() {
 
   // function to handle call answer
   function handleAnswerCall() {
-    navigator.mediaDevices.getUserMedia({audio:true,video:true}).then(()=>{
+    navigator.mediaDevices.getUserMedia({audio:webRTC?.call?.type=='video',video:true}).then(()=>{
 
       audio.pause();
       // streaming media from reciever side
-      webRTC?.sendVideo()
+      webRTC?.sendData(webRTC?.call?.type)
       socket.send(JSON.stringify({event:'call-user-answer',payload:{id:webRTC?.call?.user?.id,accepted:true,type:webRTC?.call?.type,callID:webRTC?.call?.callID}}))
     })
   }
