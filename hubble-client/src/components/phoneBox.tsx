@@ -1,4 +1,4 @@
-import { Maximize, Mic, MicOff, Phone, Video, VideoOff } from "lucide-react";
+import { Maximize, MicOff, Phone, VideoOff } from "lucide-react";
 import { memo, useContext, useEffect, useRef, useState } from "react";
 import { iwebRTCcontext, webRTCcontext } from "../context/webRTC";
 import { socketContext } from "../context/socket";
@@ -40,26 +40,26 @@ function PhoneBox() {
     return <div className="bg-slate-950 w-full h-full flex justify-center items-center text-white text-opacity-20">Your video call will be visible here</div>;
   }
   return (
-    <div className="w-full h-full bg-slate-950 ">
-      <VideoCall/>
-      <div className="absolute w-full h-full top-0 z-40 flex flex-col items-center justify-end pb-5">
-        <div className="bg-slate-800 flex gap-3 w-auto pr-7 pl-5 py-2 rounded-md ">
+    <div className=" border-red-500 w-full h-full bg-slate-950 top-0">
+      <VideoCall video={togglebtn?.video}/>
+      <div className="absolute w-full h-full top-0 z-40 flex flex-col items-center justify-end lg:pb-5">
+        <div className="bg-slate-800 justify-around flex lg:gap-3 w-full lg:w-auto pr-7 pl-5 py-2 lg:rounded-md">
           <button
             type="button"
-            className="text-white p-3 rounded-md transition hover:bg-slate-700"
+            className={`text-white p-3 rounded-md  transition ${togglebtn?.video ? "bg-transparent hover:bg-slate-700" : "bg-green-500 hover:bg-green-700 "}`}
             title="Mic off"
             onClick={handleToggleMic}
           >
-            {togglebtn?.audio ? <MicOff size={20}/>: <Mic  size={20}/>}
+            <MicOff size={20}/>
 
-          </button>
+          </button> 
           <button
             type="button"
-            className="text-white p-3 rounded-md hover:bg-slate-700 transition"
+            className={`text-white p-3 rounded-md  transition ${togglebtn?.video ? "bg-transparent hover:bg-slate-700" : "bg-green-500 hover:bg-green-700 "}`}
             title="Video off"
             onClick={handleToggleVideo}
           >
-            {togglebtn?.video ? <VideoOff size={20}/>: <Video  size={20}/>}
+            <VideoOff size={20}/>
           </button>
           <button
             type="button"
@@ -83,12 +83,17 @@ function PhoneBox() {
 }
 
 
-const VideoCall = memo(function VideoCall() {
+const VideoCall = memo(function VideoCall(props:{video:boolean}) {
   const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
 
   const another_user_video = useRef<HTMLVideoElement>(null);
   const current_user_video = useRef<HTMLVideoElement>(null);
   const another_user_mic=useRef<HTMLAudioElement>(null)
+  if(!props.video){
+    current_user_video?.current?.pause()
+  }else{
+    current_user_video?.current?.play()
+  }
 
   useEffect(() => {
     navigator.mediaDevices

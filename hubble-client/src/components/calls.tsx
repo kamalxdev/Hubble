@@ -1,6 +1,6 @@
 import { Dot, PhoneIncoming, PhoneOutgoing, User } from "lucide-react";
 import { Fragment, memo, useContext } from "react";
-import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
+// import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
 import SearchBar from "./searchBar";
 import { callContext, iCallContext } from "../context/calls";
 
@@ -50,7 +50,7 @@ type iFriendProps = {
 };
 
 const Friend = memo(function Friend(props: iFriendProps) {
-  const openChat = useContext(OpenChatContext) as iOpenChatValue;
+  // const openChat = useContext(OpenChatContext) as iOpenChatValue;
 
   return (
     <button
@@ -58,9 +58,7 @@ const Friend = memo(function Friend(props: iFriendProps) {
       // onClick={() => {
       //   openChat?.setUniqueUserId(props.UniqueUserID);
       // }}
-      className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white hover:bg-slate-600/50 transition rounded-md ${
-        openChat?.currentUniqueUserId === props?.UniqueUserID && "bg-slate-600"
-      }`}
+      className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white hover:bg-slate-600/50 transition rounded-md`}
     >
       <span
         key={"user_avatar"}
@@ -69,42 +67,46 @@ const Friend = memo(function Friend(props: iFriendProps) {
         <User />
       </span>
       <span
-        className="flex flex-col w-full border-y p-2 border-slate-800 "
+        className="flex flex-row justify-between w-full border-y p-2 border-slate-800 "
         key={"user_details"}
       >
-        <span className="flex justify-between">
+        <span className="flex flex-col  items-start">
           <h1>{props.name}</h1>
-          <h3 className="opacity-75 text-xs">@{props.username}</h3>
-        </span>
-        <span className="flex justify-between items-end text-slate-400 text-sm">
-          <span
-            className={`flex gap-2 ${
-              props.accepted ? "text-green-500" : "text-red-500"
-            }`}
-          >
-            <p className="font-semibold">{props?.type}</p>
-            <Dot size={20} className="text-slate-600" />
-            {props.incoming ? (
-              <PhoneIncoming size={16} />
-            ) : (
-              <PhoneOutgoing size={16} />
-            )}
-            {/* <Ban size={16} /> */}
+
+          <span className="flex text-slate-400">
+            <p className="lg:text-[0.70rem] xl:text-xs text-[0.65rem]">
+              {new Date().toLocaleDateString() ==
+              new Date(props?.time).toLocaleDateString()
+                ? "Today at " +
+                  new Date(props?.time).toLocaleString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : new Date(props?.time).toLocaleString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+            </p>
           </span>
-          <p className="text-xs">
-            {new Date().toLocaleDateString() == new Date(props?.time).toLocaleDateString()
-              ? "Today at " + new Date(props?.time).toLocaleString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-              : new Date(props?.time).toLocaleString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-          </p>
+        </span>
+        <span
+          className={`flex items-center gap-2  ${
+            props.accepted ? "text-green-500" : "text-red-500"
+          }`}
+        >
+          <h3 className="text-[0.70rem] xl:text-xs font-semibold">
+            {props?.type?.toUpperCase()}
+          </h3>
+          <Dot size={20} className="text-slate-600" />
+          {props.incoming ? (
+            <PhoneIncoming className="w-4"/>
+          ) : (
+            <PhoneOutgoing className="w-4" />
+          )}
+          {/* <Ban size={16} /> */}
         </span>
       </span>
     </button>

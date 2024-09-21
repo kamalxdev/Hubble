@@ -41,11 +41,14 @@ function IncomingCall() {
 
 
   // function to handle call answer
-  async function handleAnswerCall() {
-    audio.pause();
-    // streaming media from reciever side
-    webRTC?.sendVideo()
-    socket.send(JSON.stringify({event:'call-user-answer',payload:{id:webRTC?.call?.user?.id,accepted:true,type:webRTC?.call?.type,callID:webRTC?.call?.callID}}))
+  function handleAnswerCall() {
+    navigator.mediaDevices.getUserMedia({audio:true,video:true}).then(()=>{
+
+      audio.pause();
+      // streaming media from reciever side
+      webRTC?.sendVideo()
+      socket.send(JSON.stringify({event:'call-user-answer',payload:{id:webRTC?.call?.user?.id,accepted:true,type:webRTC?.call?.type,callID:webRTC?.call?.callID}}))
+    })
   }
 
   // function to handle call rejection
@@ -54,14 +57,6 @@ function IncomingCall() {
     webRTC?.setCall({})
     socket.send(JSON.stringify({event:'call-user-answer',payload:{id:webRTC?.call?.user?.id,accepted:false,type:webRTC?.call?.type,callID:webRTC?.call?.callID}}))
   }
-
-  // useEffect(() => {
-    
-  //   // webRTC.call={...webRTC.call,user:getUser?.response?.user as iUser}
-  //   // let timeout=setTimeout(()=>{handleRejectCall},10000)
-    
-  // }, [getUser]);
- 
   return (
     <div
       className={`absolute first-letter top-5 z-50 w-full justify-center ${getUser?.response?.success?"flex":'hidden'} `}
