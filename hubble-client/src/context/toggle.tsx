@@ -11,7 +11,7 @@ export type iToggleContext={
 
 
 
-export type iSidebar= 'chats' | 'calls' | 'notes';
+export type iSidebar= 'chats' | 'calls' | 'profile';
 
 export function ToggleContextProvider({
   children,

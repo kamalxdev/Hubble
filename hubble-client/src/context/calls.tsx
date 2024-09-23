@@ -7,6 +7,7 @@ type iCallHistory = {
     id: string;
     name: string;
     username: string;
+    avatar:string |null
   };
   call: {
     answer: boolean;

@@ -7,7 +7,7 @@ type ioptions = {
 
 export default function usePostData(
   url: string,
-  data: string | ioptions,
+  data: any,
   callback:string ="",
   options: ioptions = {}
 ) {

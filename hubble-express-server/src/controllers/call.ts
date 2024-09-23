@@ -40,6 +40,7 @@ export async function getUserCallHistory(req: Request, res: Response) {
           id: friend?.id,
           name: friend?.name,
           username: friend?.username,
+          avatar:friend?.avatar
         },
         call: {
           answer: call?.answer,

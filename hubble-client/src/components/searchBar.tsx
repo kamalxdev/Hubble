@@ -22,7 +22,6 @@ function SearchBar(props:iSearchBarprops) {
     true,
     [query]
   )
-
   
   return (
     <div className="flex justify-center w-full p-2 z-30 h-[10vh]">
@@ -35,7 +34,7 @@ function SearchBar(props:iSearchBarprops) {
             <span className="w-full">
               <input
                 type="search"
-                onChange={(e)=>setTimeout(()=>setQuery(e.target.value),700)}
+                onChange={(e)=>setTimeout(()=>e.target.value && setQuery(e.target.value),700)}
                 placeholder={props?.placeholder}
                 className="bg-transparent outline-none w-full"
               />

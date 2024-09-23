@@ -1,4 +1,3 @@
-import { User } from "lucide-react";
 import { Fragment, memo, useContext } from "react";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
@@ -32,6 +31,7 @@ function Messages() {
                   UniqueUserID={friend[0].id}
                   key={friend[0].username}
                   username={friend[0]?.username}
+                  avatar={friend[0]?.avatar}
                 />
               </Fragment>
             ))
@@ -50,6 +50,7 @@ type iFriendProps = {
   name: string;
   UniqueUserID: string;
   username: string;
+  avatar: string | null;
 };
 
 const Friend = memo(function Friend(props: iFriendProps) {
@@ -57,7 +58,7 @@ const Friend = memo(function Friend(props: iFriendProps) {
   var unread_Message_Count: number = 0;
   openChat?.allUserChats &&
     openChat?.allUserChats[props.UniqueUserID]?.map((chat) => {
-      if (chat.type=='sender' &&chat?.status == "unread") {
+      if (chat.type == "sender" && chat?.status == "unread") {
         unread_Message_Count++;
       }
     });
@@ -74,12 +75,15 @@ const Friend = memo(function Friend(props: iFriendProps) {
           : "hover:bg-slate-700 "
       }`}
     >
-      <span
-        key={"user_avatar"}
-        className="flex justify-center items-center border rounded-full p-1 border-white"
-      >
-        <User />
-      </span>
+      
+      <img
+        src={
+          props?.avatar
+            ? props?.avatar
+            : import.meta.env.VITE_DEFAULT_AVATAR_URL
+        }
+        className="flex justify-center items-center border rounded-full w-9"
+      />
       <span
         className="flex flex-col w-full border-y p-2 border-slate-800 "
         key={"user_details"}
@@ -125,7 +129,11 @@ const Friend = memo(function Friend(props: iFriendProps) {
                   : "No message"}
               </p>
 
-              <p className={`text-xs ${unread_Message_Count > 0 && "text-green-500"}`}>
+              <p
+                className={`text-xs ${
+                  unread_Message_Count > 0 && "text-green-500"
+                }`}
+              >
                 {openChat?.allUserChats &&
                 openChat?.allUserChats[props.UniqueUserID]
                   ? new Date(

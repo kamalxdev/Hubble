@@ -1,4 +1,4 @@
-import { Dot, PhoneIncoming, PhoneOutgoing, User } from "lucide-react";
+import { Dot, PhoneIncoming, PhoneOutgoing } from "lucide-react";
 import { Fragment, memo, useContext } from "react";
 // import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
 import SearchBar from "./searchBar";
@@ -29,6 +29,7 @@ function Calls() {
                   time={friend?.call?.createdAt}
                   accepted={friend?.call?.answer}
                   incoming={friend?.call?.incoming}
+                  avatar={friend?.user?.avatar}
                 />
               </Fragment>
             );
@@ -47,6 +48,7 @@ type iFriendProps = {
   time: Date;
   accepted: Boolean;
   incoming: Boolean;
+  avatar : string | null
 };
 
 const Friend = memo(function Friend(props: iFriendProps) {
@@ -60,12 +62,14 @@ const Friend = memo(function Friend(props: iFriendProps) {
       // }}
       className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white hover:bg-slate-600/50 transition rounded-md`}
     >
-      <span
-        key={"user_avatar"}
-        className="flex justify-center items-center border rounded-full p-1 border-white"
-      >
-        <User />
-      </span>
+      <img
+        src={
+          props?.avatar
+            ? props?.avatar
+            : import.meta.env.VITE_DEFAULT_AVATAR_URL
+        }
+        className="flex justify-center items-center border rounded-full w-9"
+      />
       <span
         className="flex flex-row justify-between w-full border-y p-2 border-slate-800 "
         key={"user_details"}

@@ -4,7 +4,6 @@ import {
   EllipsisVertical,
   Phone,
   Send,
-  User,
   Video,
 } from "lucide-react";
 import { memo, useContext, useEffect, useRef, useState } from "react";
@@ -163,9 +162,14 @@ const ChatTopBar = memo(function ChatTopBar() {
         to={"/"}
         className="inline-flex  justify-center items-center gap-3 p-2 rounded-md hover:bg-slate-700 transition"
         >
-        <span className="flex justify-center items-center border rounded-full p-1 ">
-          <User />
-        </span>
+        <img
+        src={
+          openChat.currentUserDetails?.avatar
+            ? openChat.currentUserDetails?.avatar
+            : import.meta.env.VITE_DEFAULT_AVATAR_URL
+        }
+        className="flex justify-center items-center border rounded-full w-9"
+      />
         <span className="flex flex-col transition-all">
           <span className="transition-all flex justify-center items-center gap-2">
             <h1 className="text-base">{openChat.currentUserDetails?.name}</h1>

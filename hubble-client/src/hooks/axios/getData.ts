@@ -14,7 +14,9 @@ export default function useGetData(
   url: string,
   options: ioptions = {},
   withUseEffect: boolean=false,
-  dependency:any[]= []
+  dependency:any[]= [],
+  callback:string ="",
+
 ) {
   const [response, setResponse] = useState<any>(null);
   const [error, setError] = useState<any>(null);
@@ -34,12 +36,16 @@ export default function useGetData(
           console.log(`Error getting ${url}: `, err);
         });
     }, dependency);
-  }else{
-    axios
+  }
+  function call(){
+    !withUseEffect && axios
     .get(import.meta.env.VITE_SERVER_URL+'/api/v1' + url, {...options,withCredentials:true})
     .then((res) => {
       setResponse(res.data);
       setLoading(false);
+      if(callback){
+        return window.location.href=callback
+      }
     })
     .catch((err) => {
       setLoading(false);
@@ -47,5 +53,5 @@ export default function useGetData(
       console.log(`Error getting ${url}: `, err);
     });
   }
-  return { response, error, loading };
+  return { response, error, loading,call };
 }

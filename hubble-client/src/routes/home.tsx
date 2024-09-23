@@ -9,6 +9,8 @@ import Calls from "../components/calls";
 import PhoneBox from "../components/phoneBox";
 import { iToggleContext, toggleContext } from "../context/toggle";
 import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
+import Avatar from "../components/avatar";
+import Profile from "../components/profile";
 
 export default function Home() {
   const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
@@ -31,39 +33,51 @@ export default function Home() {
 
       <div className="transition flex flex-cols w-full">
         <Sidebar />
-        <div className="lg:grid lg:grid-cols-3 w-full">
+        <div className="lg:grid lg:grid-cols-3 w-full bg-slate-950">
           {(webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
-          (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered) ||
-          toggle.sidebar == "calls" ? (
+            (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered) ||
+            (toggle.sidebar == "calls" && (
+              <>
+                <section className="transition-all shadow-xl z-30">
+                  <Calls />
+                </section>
+              </>
+            ))}
+          {toggle.sidebar == "chats" && (
             <>
-              <section className="transition-all shadow-xl">
-                <Calls />
-              </section>
-              <section
-                className={`w-full h-screen transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
-                  (webRTC?.call?.user?.id &&
-                    webRTC?.call?.Useris == "sender") ||
-                  (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered)
-                    ? "block"
-                    : "hidden"
-                }`}
-              >
-                <PhoneBox />
-              </section>
-            </>
-          ) : (
-            <>
-              <section className="transition-all">
+              <section className="transition-all z-30">
                 <Messages key={"messages"} />
               </section>
-              <section
-                className={`w-full transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
-                  openChat?.currentUniqueUserId ? "block" : "hidden"
-                }`}
-              >
-                <Chatbox />
+            </>
+          )}
+          {toggle.sidebar == "profile" && (
+            <>
+              <section className="w-full h-screen transition-all z-50 bg-slate-900 py-10 flex flex-col gap-5">
+                <Avatar />
+                <Profile />
               </section>
             </>
+          )}
+          {(webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
+          (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered) ? (
+            <section
+              className={`w-full h-screen transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
+                (webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
+                (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered)
+                  ? "block"
+                  : "hidden"
+              }`}
+            >
+              <PhoneBox />
+            </section>
+          ) : (
+            <section
+              className={`w-full transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
+                openChat?.currentUniqueUserId ? "block" : "hidden"
+              }`}
+            >
+              <Chatbox />
+            </section>
           )}
         </div>
       </div>

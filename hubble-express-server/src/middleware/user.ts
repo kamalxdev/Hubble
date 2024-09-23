@@ -33,7 +33,7 @@ export async function authorizationHeader(
     await prisma.user
       .findUnique({
         where: {
-          email: (decoded as iJWTdata)?.email,
+          id: (decoded as iJWTdata)?.id,
         },
       })
       .then((data) => {

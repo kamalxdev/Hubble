@@ -2,6 +2,7 @@ import { PrismaClient, User } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Request, Response } from "express";
 import { client } from "../redis";
+import {upload} from "../utils/cloudinary";
 const prisma = new PrismaClient().$extends(withAccelerate());
 
 export async function getUser(req: Request, res: Response) {
@@ -83,5 +84,70 @@ export async function getUserFriends(req: Request, res: Response){
     console.log("Error on getUserFriends: ", error);
 
     return res.json({ success: false, error: "Internal Server Error" });
+  }
+}
+
+
+export async function postUpdatedProfiledata(req: Request, res: Response){
+  try {
+    const body=req.body;
+    const user=res.locals.user;
+
+    const updatedUser=await prisma.user.update({
+      where:{
+        id:user?.id
+      },
+      data:req.body
+    })
+    if(!updatedUser){
+    return res.json({ success: false, error: "Error on updating user" });
+    }
+    return res.json({ success: true, updatedUser});
+
+  } catch (error) {
+    console.log("Error from updating profile data: ",error);
+    return res.json({ success: false, error: "Internal Server Error" });
+    
+  }
+}
+
+export async function postUpdatedProfileImage(req: Request, res: Response){
+  try {
+    const user=res.locals.user;
+    const path = req.file?.path;
+    if(!path){
+    return res.json({error:"Path is required",success:false});
+    }
+    const avatar=await upload(path as string)
+    const updated_avatar_on_DB=await prisma.user.update({
+      where:{
+        id:user?.id
+      },
+      data:{
+        avatar:avatar?.fileURL
+      }
+    })
+    if(!updated_avatar_on_DB) return res.json({error:"Error on updating in database",success:false});
+    return res.json({avatar:avatar.fileURL,success:true});
+
+  } catch (error) {
+    console.log("Error from updating profile Image: ",error);
+    return res.json({ success: false, error: "Internal Server Error" });
+    
+  }
+}
+
+export async function getLogOut(req: Request, res: Response){
+  try {
+    const user=res.locals.user;
+    if(!user){
+    return res.json({ success: false, error: "Only logged in user can log out" });
+    }
+    return res.cookie('auth','').json({ success: true, message: "Logged out successfully" });
+
+  } catch (error) {
+    console.log("Error on Log out of user: ",error);
+    return res.json({ success: false, error: "Internal Server Error" });
+    
   }
 }
