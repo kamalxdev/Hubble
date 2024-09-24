@@ -11,7 +11,7 @@ function Messages() {
   if (user?.loading) {
     return <MessagesLoader />;
   }
- const friends = user?.friends as iUser[][];
+ const friends = user?.friends as iUser[];
  
   return (
     <section className="bg-slate-900" key={"message"}>
@@ -23,13 +23,13 @@ function Messages() {
         >
           {friends.length >= 1 ? (
             friends.map((friend) => (
-              <Fragment key={friend[0].id}>
+              <Fragment key={friend?.id}>
                 <Friend
-                  name={friend[0].name}
-                  UniqueUserID={friend[0].id}
-                  key={friend[0].username}
-                  username={friend[0]?.username}
-                  avatar={friend[0]?.avatar}
+                  name={friend?.name}
+                  UniqueUserID={friend?.id}
+                  key={friend?.username}
+                  username={friend?.username}
+                  avatar={friend?.avatar}
                 />
               </Fragment>
             ))

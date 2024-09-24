@@ -5,7 +5,7 @@ import { iUser } from "../types/user";
 
 export type iCurrentUserContext= {
     user:iUser,
-    friends:iUser[][],
+    friends:iUser[],
     setUser:(user:iUser)=>void,
     setFriends:(friends:iUser[][])=>void,
     loading:Boolean
@@ -20,7 +20,7 @@ export const currentUser = createContext<iCurrentUserContext | {}>({})
 
 export function CurrentUserProvider({ children }:{children:React.ReactNode}){
     const [user,setUser]=useState<iUser>()
-    const [friends,setFriends]=useState<iUser[][]>()
+    const [friends,setFriends]=useState<iUser[]>()
     const [loading,setloading]=useState<Boolean>(true)
     const cUser=useGetData(`/user/verify`,{},true);
     const allfriend=useGetData('/user/friends',{},true);

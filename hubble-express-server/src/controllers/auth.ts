@@ -34,10 +34,6 @@ export async function postLogin(req: Request, res: Response) {
       },
       cacheStrategy: { ttl: 60 },
     });
-    // const allUser = await client.get("users");
-    // const USER = JSON.parse(allUser as string)?.filter(
-    //   (user: User) => user.email == body?.email
-    // );
     if (!USER) {
       return res.json({
         success: false,
@@ -140,10 +136,6 @@ export async function postRegister(req: Request, res: Response) {
         password: hashedPassword,
       },
     });
-    //
-    // setting users in redis
-    const allusers = await prisma.user.findMany({});
-    await client.set("users", JSON.stringify(allusers));
     //
     return res.json({ success: true, USER });
   } catch (error) {

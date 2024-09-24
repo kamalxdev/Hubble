@@ -42,7 +42,7 @@ function SearchBar(props:iSearchBarprops) {
           </div>
           {(getSearchresults?.response?.success && query) && <div className="inline-flex items-center flex-col w-full z-30 mt-3">
             {getSearchresults?.response?.searchResult.length>=1? (getSearchresults?.response?.searchResult?.map((user:iUser)=>{
-              return <SearchResult id={user?.id} name={user?.name} username={user?.username} key={'search'+user?.password} onClick={()=>
+              return <SearchResult id={user?.id} name={user?.name} username={user?.username} key={'search'+user?.username} onClick={()=>
                 {openChat?.setUniqueUserId(user?.id);setQuery('')}}/>
             })):<h1 className="opacity-30">No results found</h1>}
           </div>}

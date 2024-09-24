@@ -22,7 +22,7 @@ export default function Profile() {
     {
       heading: "Your email",
       for: "email",
-      currentvalue: user?.user?.email,
+      currentvalue: user?.user?.email as string,
     },
   ];
   return (
