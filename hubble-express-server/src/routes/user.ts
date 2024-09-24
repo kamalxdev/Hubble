@@ -16,8 +16,7 @@ const router = Router();
 
 // multer configuration
 const uploader=multer({
-  storage:multer.diskStorage({}),
-  limits:{fileSize:500000}
+  storage:multer.diskStorage({})
 })
 
 

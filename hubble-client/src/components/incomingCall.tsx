@@ -1,4 +1,3 @@
-import { User } from "lucide-react";
 import { memo, useContext, useEffect } from "react";
 import { iwebRTCcontext, webRTCcontext } from "../context/webRTC";
 import useGetData from "../hooks/axios/getData";
@@ -15,7 +14,11 @@ function IncomingCall() {
     true,
     [webRTC?.call?.user?.id]
   );
-  
+  useEffect(()=>{
+    if(getUser?.response?.user){
+      webRTC?.setCall({...webRTC?.call,user:getUser?.response?.user})
+    }
+  },[getUser?.response?.user])
   
   // call ringtone
   const audio = new Audio("/audio/ring.mp3");
@@ -62,12 +65,14 @@ function IncomingCall() {
       className={`absolute first-letter top-5 z-50 w-full justify-center ${getUser?.response?.success?"flex":'hidden'} `}
     >
       <div className="flex justify-start items-center gap-4 p-2 mx-5 my-2 bg-slate-900 text-white  transition rounded-md animate-bounce">
-        <span
-          key={"call_user_avatar"}
-          className="flex justify-center items-center border rounded-full border-white p-1"
-        >
-          <User />
-        </span>
+        <img
+        src={
+          getUser?.response?.user?.avatar
+            ? getUser?.response?.user?.avatar
+            : import.meta.env.VITE_DEFAULT_AVATAR_URL
+        }
+        className="flex justify-center items-center border rounded-full w-9"
+      />
         <span className="flex flex-col w-full font-semibold">
           <h1>{getUser?.response?.user?.name}</h1>
         </span>

@@ -18,6 +18,8 @@ export type iCall = {
     username?: string;
     name?: string;
     email?: string;
+    avatar?: string;
+
   };
   iceCandidate?: any;
   senderOffer?: any;

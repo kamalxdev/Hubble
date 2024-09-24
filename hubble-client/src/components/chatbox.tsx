@@ -133,13 +133,14 @@ const ChatTopBar = memo(function ChatTopBar() {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
   const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
   const socket = useContext(socketContext) as WebSocket;
+  
   function handleCreateCall(type: string) {
     navigator.mediaDevices
       .getUserMedia({ video: type=="video", audio: true })
       .then(() => {
         webRTC?.setCall({
           ...webRTC?.call,
-          user: { id: openChat.currentUniqueUserId },
+          user: openChat.currentUserDetails,
           type,
           answered: false,
           Useris: "sender",
@@ -225,7 +226,7 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
         event: "message-send",
         payload: {
           to: id,
-          from: user?.currentuser?.response?.user?.id,
+          from: user?.user?.id,
           message,
           time,
           status: "unread",
@@ -264,7 +265,7 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
               event: "message-send-start-typing",
               payload: {
                 to: id,
-                from: user?.currentuser?.response?.user?.id,
+                from: user?.user?.id,
               },
             })
           )

@@ -8,13 +8,11 @@ import SearchBar from "./searchBar";
 function Messages() {
   const user = useContext(currentUser) as iCurrentUserContext;
 
-  if (user.currentuser.loading || user.friends.loading) {
+  if (user?.loading) {
     return <MessagesLoader />;
   }
-  if (!user.friends.response.success) {
-    return <div>{user.friends.error}</div>;
-  }
-  const friends = user?.friends?.response?.friends as iUser[][];
+ const friends = user?.friends as iUser[][];
+ 
   return (
     <section className="bg-slate-900" key={"message"}>
       <SearchBar placeholder="Search users" for="user" />

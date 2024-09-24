@@ -1,19 +1,31 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import usePostData from "../hooks/axios/postData";
 import { LoaderCircle } from "lucide-react";
 
 export default function Avatar() {
   const user = useContext(currentUser) as iCurrentUserContext;
-  const [updatedform,setUpdatedForm]=useState<FormData>()
-  const postUpdatedAvatar=usePostData('/user/avatar',updatedform,undefined,{
-    headers: {
-      'Content-Type': 'multipart/form-data'
+  const [updatedform, setUpdatedForm] = useState<FormData>();
+  const postUpdatedAvatar = usePostData(
+    "/user/avatar",
+    updatedform,
+    undefined,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     }
-  })
+  );
+  useEffect(() => {
+    if (postUpdatedAvatar?.response?.success) {
+      user?.setUser({
+        ...user?.user,
+        avatar: postUpdatedAvatar?.response?.avatar,
+      });
+    }
+  }, [postUpdatedAvatar?.response]);
   const InputFileref = useRef<HTMLInputElement>(null);
   const [changeAvatar, setchangeAvatar] = useState("");
-  console.log("avatar: ", changeAvatar);
   function checkUplodedFile(event: React.ChangeEvent<HTMLInputElement>) {
     let fileName = event.target.value;
     if (
@@ -24,9 +36,9 @@ export default function Avatar() {
       setchangeAvatar(
         URL.createObjectURL((event?.target?.files as FileList)[0])
       );
-      let formdata=new FormData();
-      formdata.append('avatar',(event?.target?.files as FileList)[0])
-      setUpdatedForm(formdata)
+      let formdata = new FormData();
+      formdata.append("avatar", (event?.target?.files as FileList)[0]);
+      setUpdatedForm(formdata);
     } else {
       if (InputFileref?.current) {
         InputFileref.current.value = "";
@@ -36,10 +48,10 @@ export default function Avatar() {
   }
   async function handleUploadAvatar() {
     try {
-      await postUpdatedAvatar.call()
-      setchangeAvatar('')
+      await postUpdatedAvatar.call();
+      setchangeAvatar("");
     } catch (error) {
-      console.log("Error on posting updated avatar: ",error);
+      console.log("Error on posting updated avatar: ", error);
     }
   }
   return (
@@ -47,29 +59,35 @@ export default function Avatar() {
       <span className="flex justify-center items-center border rounded-full w-44 h-44 bg-white overflow-hidden">
         <img
           src={
-            postUpdatedAvatar?.response?.avatar?postUpdatedAvatar?.response?.avatar:
-            changeAvatar
+            postUpdatedAvatar?.response?.avatar
+              ? postUpdatedAvatar?.response?.avatar
+              : changeAvatar
               ? changeAvatar
-              : (user?.currentuser?.response?.user?.avatar
-              ? user?.currentuser?.response?.user?.avatar
-              : import.meta.env.VITE_DEFAULT_AVATAR_URL)
+              : user?.user?.avatar
+              ? user?.user?.avatar
+              : import.meta.env.VITE_DEFAULT_AVATAR_URL
           }
           width="auto"
           height={"auto"}
         />
       </span>
       {changeAvatar ? (
-        <button onClick={handleUploadAvatar} className="bg-slate-800 px-5 py-2 rounded-md text-green-500">
-           {postUpdatedAvatar?.loading ? <LoaderCircle className="animate-spin"/>:"Upload"}
+        <button
+          onClick={handleUploadAvatar}
+          className="bg-slate-800 px-5 py-2 rounded-md text-green-500"
+        >
+          {postUpdatedAvatar?.loading ? (
+            <LoaderCircle className="animate-spin" />
+          ) : (
+            "Upload"
+          )}
         </button>
       ) : (
         <label
           htmlFor="upload-avatar"
           className="bg-slate-800 px-5 py-2 rounded-md text-white"
         >
-          {user?.currentuser?.response?.user?.avatar
-            ? "Change Avatar"
-            : "Add Avatar"}
+          {user?.user?.avatar ? "Change Avatar" : "Add Avatar"}
         </label>
       )}
       <input

@@ -1,4 +1,4 @@
-import { Maximize, MicOff, Phone, User, VideoOff } from "lucide-react";
+import { Maximize, MicOff, Phone, VideoOff } from "lucide-react";
 import { memo, useContext, useEffect, useRef, useState } from "react";
 import { iwebRTCcontext, webRTCcontext } from "../context/webRTC";
 import { socketContext } from "../context/socket";
@@ -10,7 +10,7 @@ function PhoneBox() {
     audio: true,
     video: true,
   });
-
+  
   function handleEndCall() {
     webRTC?.peer?.sender?.close();
     webRTC?.peer?.reciever?.close();
@@ -145,13 +145,18 @@ const VideoCall = memo(function VideoCall(props: { video: boolean }) {
         }
       };
     }
-    if (webRTC?.peer?.reciever ) {
+    if (webRTC?.peer?.reciever) {
       const track1 =
         webRTC?.peer?.reciever?.getTransceivers()[0]?.receiver?.track;
       const track2 =
         webRTC?.peer?.reciever?.getTransceivers()[1]?.receiver?.track;
 
-      if (another_user_video?.current && another_user_mic.current && track1 && track2) {
+      if (
+        another_user_video?.current &&
+        another_user_mic.current &&
+        track1 &&
+        track2
+      ) {
         const another_user_audio = new Audio();
         another_user_audio.srcObject = new MediaStream([track1]);
         another_user_audio.play();
@@ -159,7 +164,7 @@ const VideoCall = memo(function VideoCall(props: { video: boolean }) {
         another_user_video.current.srcObject = new MediaStream([track2]);
       }
     }
-  }, [webRTC?.peer?.reciever?.getTransceivers()[1]?.receiver?.track,webRTC?.peer?.reciever?.getTransceivers()[0]?.receiver?.track]);
+  }, [webRTC?.peer?.reciever?.getTransceivers()[1]?.receiver?.track, webRTC?.peer?.reciever?.getTransceivers()[0]?.receiver?.track]);
   return (
     <div className="w-full h-full ">
       <div className="w-full h-full">
@@ -189,7 +194,8 @@ const VoiceCall = memo(function VideoCall() {
 
   useEffect(() => {
     if (webRTC?.peer?.reciever) {
-      const track = webRTC?.peer?.reciever?.getTransceivers()[0]?.receiver?.track;
+      const track =
+        webRTC?.peer?.reciever?.getTransceivers()[0]?.receiver?.track;
       if (another_user_mic.current && track) {
         const another_user_audio = new Audio();
         another_user_audio.srcObject = new MediaStream([track]);
@@ -201,10 +207,24 @@ const VoiceCall = memo(function VideoCall() {
   return (
     <div className="w-full h-full ">
       <div className="w-full h-full">
-      <div className="w-full h-full flex justify-center items-center">
-      <User size={120} className="absolute text-green-500 p-3 border border-green-500 rounded-full animate-pulse"/>
-      <User size={80} className="absolute text-green-500 p-3 border border-green-500 rounded-full animate-ping"/>
-      </div>
+        <div className="w-full h-full flex justify-center items-center">
+          <img
+            src={
+              webRTC?.call?.user?.avatar
+                ? webRTC?.call?.user?.avatar
+                : import.meta.env.VITE_DEFAULT_AVATAR_URL
+            }
+            className="flex justify-center items-center border-4 p-3 border-green-500 rounded-full animate-pulse w-48"
+          />
+          <img
+            src={
+              webRTC?.call?.user?.avatar
+                ? webRTC?.call?.user?.avatar
+                : import.meta.env.VITE_DEFAULT_AVATAR_URL
+            }
+            className=" absolute flex justify-center items-center border-4 p-3 border-green-500 rounded-full animate-ping w-40"
+          />
+        </div>
         <audio ref={another_user_mic} className="hidden" autoPlay></audio>
       </div>
       <div className="absolute w-2/12 h-auto z-40 bottom-20 right-20 drop-shadow-2xl"></div>

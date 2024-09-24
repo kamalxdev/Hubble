@@ -33,6 +33,7 @@ export default function usePostData(
         setLoading(false);
         console.log(`Error getting ${url}: `, err);
       });
+      return response
   }
 
   return { response, error, loading, call };

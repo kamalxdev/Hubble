@@ -1,4 +1,4 @@
-import { memo, useContext, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import { Check, LoaderCircle, Pencil } from "lucide-react";
 import useGetData from "../hooks/axios/getData";
@@ -12,24 +12,24 @@ export default function Profile() {
     {
       heading: "Your name",
       for: "name",
-      currentvalue: user?.currentuser?.response?.user?.name,
+      currentvalue: user?.user?.name,
     },
     {
       heading: "Your username",
       for: "username",
-      currentvalue: user?.currentuser?.response?.user?.username,
+      currentvalue: user?.user?.username,
     },
     {
       heading: "Your email",
       for: "email",
-      currentvalue: user?.currentuser?.response?.user?.email,
+      currentvalue: user?.user?.email,
     },
   ];
   return (
     <section className="flex flex-col gap-5 ">
       <div className="flex flex-col gap-5 ">
         {EditDetailsData.map((data) => (
-          <EditDetail {...data} key={data?.currentvalue} />
+          <EditDetail {...data} key={data?.for} />
         ))}
       </div>
       <div className="w-full text-white flex justify-center">
@@ -50,6 +50,8 @@ type iEditDetail = {
   currentvalue: string;
 };
 const EditDetail = memo(function EditDetail(props: iEditDetail) {
+  const user = useContext(currentUser) as iCurrentUserContext;
+
   const [edit, setEdit] = useState(false);
   const [value, setValue] = useState(props?.currentvalue);
   const [loading, setloading] = useState<boolean>(false);
@@ -59,7 +61,11 @@ const EditDetail = memo(function EditDetail(props: iEditDetail) {
     { [props?.for]: value },
     undefined
   );
-
+  useEffect(() => {
+    if (postUpdatedData?.response?.success) {
+      user?.setUser(postUpdatedData?.response?.updatedUser);
+    }
+  }, [postUpdatedData?.response]);
   async function sendAndValidateOTP(email: string) {
     const otp_sent_to_email = await axios.post(
       import.meta.env.VITE_SERVER_URL + "/api/v1/auth/send-otp",
@@ -85,8 +91,8 @@ const EditDetail = memo(function EditDetail(props: iEditDetail) {
   }
 
   async function handleSubmitUpdatedData() {
-    if (edit) {
-      if (props?.for == "email") {
+    if (edit && props?.currentvalue !=value) {
+      if (props?.for == "email" ) {
         setloading(true);
         let otp_to_current_mail = await sendAndValidateOTP(props?.currentvalue);
         if (otp_to_current_mail) {
@@ -105,7 +111,7 @@ const EditDetail = memo(function EditDetail(props: iEditDetail) {
     setEdit(!edit);
   }
   return (
-    <div className="text-white px-10">
+    <div className="text-white px-10" key={props?.heading}>
       <h1 className="opacity-50">{props?.heading}</h1>
       <span className="relative w-full flex gap-5  ml-2 ">
         <input

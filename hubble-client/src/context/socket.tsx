@@ -23,16 +23,16 @@ export function SocketContextProvider({
   };
   useEffect(() => {
     // sending user id
-    if (user?.currentuser?.response?.user) {
+    if (user?.user) {
       socket.send(
         JSON.stringify({
           event: "user-connected",
-          payload: { id: user?.currentuser?.response?.user?.id },
+          payload: { id: user?.user?.id },
         })
       );
     }
     //
-  }, [user?.currentuser?.response?.user]);
+  }, [user?.user]);
   useEffect(() => {
     // socket.send(JSON.stringify({event:"",payload:{}}))
     // checking if given user is online

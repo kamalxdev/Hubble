@@ -17,7 +17,7 @@ function Sidebar() {
           onClick={() => toggle?.setSidebar("profile")}
         >
           <img
-            src={user?.currentuser?.response?.user?.avatar ? user?.currentuser?.response?.user?.avatar:
+            src={user?.user?.avatar ? user?.user?.avatar:
               import.meta.env.VITE_DEFAULT_AVATAR_URL
             }
             className="flex justify-center items-center border rounded-full w-11"
