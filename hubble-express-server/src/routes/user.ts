@@ -7,7 +7,7 @@ import {
   getUsersinBulk,
   getUserVerification,
   postUpdatedProfiledata,
-  postUpdatedProfileImage,
+  postUpdatedAvatar,
 } from "../controllers/user";
 import { authorizationHeader } from "../middleware/user";
 import multer from 'multer'
@@ -31,7 +31,7 @@ router.get("/logout",getLogOut)
 router.get("/search", getUserSearchResult);
 router.get('/friends',getUserFriends)
 router.post('/profile',postUpdatedProfiledata)
-router.post('/avatar',uploader.single('avatar'),postUpdatedProfileImage)
+router.post('/avatar',uploader.single('avatar'),postUpdatedAvatar)
 
 
 

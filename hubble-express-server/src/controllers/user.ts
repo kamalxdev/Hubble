@@ -2,7 +2,7 @@ import { PrismaClient, User } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Request, Response } from "express";
 import { client } from "../redis";
-import { upload } from "../utils/cloudinary";
+import { deleteFile, upload } from "../utils/cloudinary";
 const prisma = new PrismaClient().$extends(withAccelerate());
 
 export async function getUser(req: Request, res: Response) {
@@ -60,7 +60,6 @@ export async function getUserSearchResult(req: Request, res: Response) {
     const query = req?.query?.q as string;
     if (!query) return res.json({ success: false });
     const allUsers = await client.get("users");
-
     const allUsersFiltered: User[] = JSON.parse(allUsers as string)?.filter(
       (user: User) =>
         user?.name?.toLowerCase().startsWith(query.toLowerCase()) ||
@@ -114,7 +113,7 @@ export async function postUpdatedProfiledata(req: Request, res: Response) {
   }
 }
 
-export async function postUpdatedProfileImage(req: Request, res: Response) {
+export async function postUpdatedAvatar(req: Request, res: Response) {
   try {
     const user = res.locals.user;
     const path = req.file?.path;
@@ -122,6 +121,7 @@ export async function postUpdatedProfileImage(req: Request, res: Response) {
       return res.json({ error: "Path is required", success: false });
     }
     const avatar = await upload(path as string);
+    user?.avatar && await deleteFile(user?.avatar)
     const updated_avatar_on_DB = await prisma.user.update({
       where: {
         id: user?.id,
