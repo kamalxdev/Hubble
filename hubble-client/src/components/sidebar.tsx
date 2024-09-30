@@ -1,4 +1,4 @@
-import { Chat, Gear, Notepad, Phone } from "phosphor-react";
+import { Chat, Phone } from "phosphor-react";
 import { memo, useContext } from "react";
 import { currentUser, iCurrentUserContext } from "../context/user";
 import { iToggleContext, toggleContext } from "../context/toggle";
@@ -9,7 +9,7 @@ function Sidebar() {
   const hover_btn_class =
     "hover:bg-slate-700 lg:p-3 py-1 px-3 rounded-md transition";
   return (
-    <section className=" absolute bottom-0 lg:top-0 lg:relative flex flex-row lg:flex-col items-center justify-between lg:p-2 p-3 lg:py-10 py-1 lg:h-screen lg:w-auto w-screen h-auto bg-slate-800 z-40 text-white">
+    <section className=" absolute bottom-0 lg:top-0 lg:relative flex flex-row lg:flex-col items-center justify-between lg:p-2 p-3 lg:py-10 py-1 lg:w-auto w-screen h-auto bg-slate-800 z-40 text-white">
       <div className="lg:w-full lg:block flex flex-row">
         <button
           type="button"
@@ -41,21 +41,21 @@ function Sidebar() {
           >
             <Phone size={28} className="relative" />
           </button>
-          <button
+          {/* <button
             type="button"
             title="Notes"
             className={hover_btn_class}
             onClick={() => toggle?.setSidebar("chats")}
           >
             <Notepad size={28} className="relative" />
-          </button>
+          </button> */}
         </div>
       </div>
-      <div className="flex">
+      {/* <div className="flex">
         <button type="button" title="Setting">
           <Gear size={28} />
         </button>
-      </div>
+      </div> */}
     </section>
   );
 }

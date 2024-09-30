@@ -1,7 +1,6 @@
 import {
   ArrowLeft,
   CheckCheck,
-  EllipsisVertical,
   Phone,
   Send,
   Video,
@@ -79,7 +78,7 @@ function ChatBox() {
       <ChatTopBar />
       </div>
       <div className="relative overflow-hidden overflow-y-scroll w-full h-[84vh] lg:h-[86vh]">
-        <div className="absolute inline-flex flex-col gap-5 w-full py-5 px-3 overflow-hidden  ">
+        <div className=" inline-flex flex-col gap-5 w-full py-5 px-3 overflow-hidden  ">
           {openChat?.currentUserChats?.map((chat, index) => {
             let chatDate = new Date(chat?.time);
 
@@ -200,18 +199,18 @@ const ChatTopBar = memo(function ChatTopBar() {
           onClick={() => handleCreateCall("voice")}
           className={topBarLeftStyling}
         >
-          <Phone className="lg:w-5 w-4" />
+          <Phone className="w-5" />
         </button>
         <button
           type="button"
           onClick={() => handleCreateCall("video")}
           className={topBarLeftStyling}
         >
-          <Video className="lg:w-5 w-4" />
+          <Video className="w-5" />
         </button>
-        <button type="button" className={topBarLeftStyling}>
+        {/* <button type="button" className={topBarLeftStyling}>
           <EllipsisVertical className="lg:w-5 w-4" />
-        </button>
+        </button> */}
       </span>
     </div>
   );

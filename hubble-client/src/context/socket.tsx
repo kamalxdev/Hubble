@@ -55,6 +55,10 @@ export function SocketContextProvider({
       
     }
   };
+  socket.onclose =()=>{
+    alert("Failed to connect to server. Refresh and try again.");
+    location.reload();
+  }
   return (
     <socketContext.Provider value={socket}>{children}</socketContext.Provider>
   );

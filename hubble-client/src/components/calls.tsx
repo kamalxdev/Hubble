@@ -9,10 +9,10 @@ function Calls() {
 
   const friends = call?.history;
   return (
-    <section className="bg-slate-900" key={"message"}>
+    <section className="bg-slate-900 h-screen" key={"message"}>
       <SearchBar placeholder="Search calls" for="call" />
 
-      <div className="relative h-[86vh] lg:h-[93vh] overflow-y-scroll" key={"hell"}>
+      <div className="relative h-[79.5vh] lg:h-[93vh] overflow-y-scroll" key={"hell"}>
         <div
           className=" inline-flex flex-col justify-center w-full"
           key={"friends"}
