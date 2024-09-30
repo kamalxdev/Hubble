@@ -72,7 +72,7 @@ export default function Home() {
             </section>
           ) : (
             <section
-              className={`w-full transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
+              className={` w-full h-full transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
                 openChat?.currentUniqueUserId ? "block" : "hidden"
               }`}
             >

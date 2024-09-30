@@ -24,11 +24,11 @@ function ChatBox() {
 
   const divref = useRef(null);
 
-  useEffect(() => {
-    if (divref.current) {
-      (divref?.current as HTMLElement)?.scrollIntoView({ behavior: "smooth" });
-    }
-  });
+  // useEffect(() => {
+  //   if (divref.current) {
+  //     (divref?.current as HTMLElement)?.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // });
   useEffect(() => {
     // marking chat as read
     if (!openChat?.loading) {
@@ -74,10 +74,12 @@ function ChatBox() {
 
   let currentDate: Date;
   return (
-    <section className="w-full flex flex-col justify-between transition overflow-hidden bg-slate-950">
+    <section className="relative w-full h-full flex flex-col justify-between transition overflow-hidden bg-slate-950">
+      <div className="relative w-full">
       <ChatTopBar />
-      <div className="relative h-[84vh] overflow-hidden overflow-y-scroll ">
-        <div className="inline-flex flex-col gap-5 w-full py-5 px-10 overflow-hidden  ">
+      </div>
+      <div className="relative overflow-hidden overflow-y-scroll w-full h-[84vh] lg:h-[86vh]">
+        <div className="absolute inline-flex flex-col gap-5 w-full py-5 px-10 overflow-hidden  ">
           {openChat?.currentUserChats?.map((chat, index) => {
             let chatDate = new Date(chat?.time);
 
@@ -124,7 +126,9 @@ function ChatBox() {
         </div>
         <div ref={divref}></div>
       </div>
+      <div>
       <MessageInput id={openChat?.currentUserDetails?.id} />
+      </div>
     </section>
   );
 }
@@ -155,7 +159,7 @@ const ChatTopBar = memo(function ChatTopBar() {
   }
   const topBarLeftStyling = "hover:bg-slate-700 transition lg:p-3 p-2 rounded-md ";
   return (
-    <div className="flex h-[8vh] w-full top-0 justify-between items-center bg-slate-800 lg:px-10 px-2 py-2 text-white">
+    <div className="flex w-full top-0 justify-between items-center bg-slate-800 lg:px-10 px-2 py-2 text-white">
       <span className="flex gap-2">
 
       <button type="button" className={`block  lg:hidden ${topBarLeftStyling}`} onClick={()=>openChat.setUniqueUserId('')}><ArrowLeft size={20}/></button>
@@ -251,7 +255,7 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
     setMessage("");
   }
   return (
-    <div className="w-full flex relative bottom-0 justify-between text-white bg-slate-800 shadow-inner lg:px-5 px-2 py-2 gap-5 h-[8vh]">
+    <div className="w-full flex relative bottom-0 justify-between text-white bg-slate-800 shadow-inner lg:px-5 px-2 py-2 gap-5">
       <input
         type="text"
         autoFocus
