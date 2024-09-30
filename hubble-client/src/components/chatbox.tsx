@@ -24,11 +24,11 @@ function ChatBox() {
 
   const divref = useRef(null);
 
-  // useEffect(() => {
-  //   if (divref.current) {
-  //     (divref?.current as HTMLElement)?.scrollIntoView({ behavior: "smooth" });
-  //   }
-  // });
+  useEffect(() => {
+    if (divref.current) {
+      (divref?.current as HTMLElement)?.scrollIntoView({ behavior: "smooth" });
+    }
+  });
   useEffect(() => {
     // marking chat as read
     if (!openChat?.loading) {
@@ -79,7 +79,7 @@ function ChatBox() {
       <ChatTopBar />
       </div>
       <div className="relative overflow-hidden overflow-y-scroll w-full h-[84vh] lg:h-[86vh]">
-        <div className="absolute inline-flex flex-col gap-5 w-full py-5 px-10 overflow-hidden  ">
+        <div className="absolute inline-flex flex-col gap-5 w-full py-5 px-3 overflow-hidden  ">
           {openChat?.currentUserChats?.map((chat, index) => {
             let chatDate = new Date(chat?.time);
 

@@ -24,9 +24,9 @@ function SearchBar(props:iSearchBarprops) {
   )
   
   return (
-    <div className="flex justify-center w-full p-2 z-30 h-[10vh]">
+    <div className="relative flex justify-center w-full p-2 px-4 z-30 ">
       <div className="relative w-full">
-        <div className="absolute inline-flex flex-col items-center bg-slate-700 p-3 text-white rounded-md z-30 w-full transition-all">
+        <div className=" inline-flex flex-col items-center bg-slate-700 p-3 text-white rounded-md z-30 w-full transition-all">
           <div className="inline-flex items-center gap-2 w-full">
             <span>
               <Search size={16} />
