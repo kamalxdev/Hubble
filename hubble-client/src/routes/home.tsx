@@ -31,9 +31,9 @@ export default function Home() {
         webRTC?.call?.Useris == "reciever" &&
         (webRTC?.call?.answered ? "" : <IncomingCall />)}
 
-      <div className="transition flex flex-cols w-full">
+      <div className="transition flex flex-col-reverse lg:flex-row w-full h-screen">
         <Sidebar />
-        <div className="lg:grid lg:grid-cols-3 w-full bg-slate-950">
+        <div className="lg:grid lg:grid-cols-3 w-full h-full bg-slate-950">
           {(webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
             (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered) ||
             (toggle.sidebar == "calls" && (
@@ -72,7 +72,7 @@ export default function Home() {
             </section>
           ) : (
             <section
-              className={` w-full h-full transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
+              className={` w-full h-screen transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
                 openChat?.currentUniqueUserId ? "block" : "hidden"
               }`}
             >

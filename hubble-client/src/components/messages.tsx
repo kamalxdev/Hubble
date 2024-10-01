@@ -14,11 +14,16 @@ function Messages() {
  const friends = user?.friends as iUser[];
  
   return (
-    <section className="bg-slate-900 h-screen" key={"message"}>
+    <section className="bg-slate-900 h-full grid grid-flow-row-dense" key={"message"}>
+      <div className="h-fit  row-auto">
       <SearchBar placeholder="Search users" for="user" />
-      <div className="relative h-[79.5vh] lg:h-[93vh] overflow-y-scroll" key={"hell"}>
+
+      </div>
+      <div className="relative overflow-y-scroll " key={"hell"}>
+      <div className="h-[80vh] lg:h-[90vh]">
+
         <div
-          className=" inline-flex flex-col justify-center w-full"
+          className="absolute inline-flex flex-col justify-center w-full"
           key={"friends"}
         >
           {friends.length >= 1 ? (
@@ -38,6 +43,7 @@ function Messages() {
               No messages
             </div>
           )}
+        </div>
         </div>
       </div>
     </section>
@@ -67,7 +73,7 @@ const Friend = memo(function Friend(props: iFriendProps) {
       onClick={() => {
         openChat?.setUniqueUserId(props.UniqueUserID);
       }}
-      className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white transition rounded-md ${
+      className={`inline-flex justify-start items-center gap-4 lg:px-2 mx-5 text-white transition rounded-md ${
         openChat?.currentUniqueUserId === props?.UniqueUserID
           ? "bg-slate-800"
           : "hover:bg-slate-700 "

@@ -73,12 +73,13 @@ function ChatBox() {
 
   let currentDate: Date;
   return (
-    <section className="relative w-full h-full flex flex-col justify-between transition overflow-hidden bg-slate-950">
-      <div className="relative w-full">
+    <section className="relative w-full h-screen transition overflow-hidden bg-slate-950 grid grid-flow-row-dense	">
+      <div className="relative w-full h-fit ">
       <ChatTopBar />
       </div>
-      <div className="relative overflow-hidden overflow-y-scroll w-full h-[84vh] lg:h-[86vh]">
-        <div className=" inline-flex flex-col gap-5 w-full py-5 px-3 overflow-hidden  ">
+      <div className="relative overflow-hidden overflow-y-scroll w-full h-full ">
+        <div className=" h-[85vh] ">
+        <div className="absolute inline-flex flex-col gap-5 w-full py-5 px-3 overflow-hidden">
           {openChat?.currentUserChats?.map((chat, index) => {
             let chatDate = new Date(chat?.time);
 
@@ -122,12 +123,13 @@ function ChatBox() {
               );
             }
           })}
-        </div>
         <div ref={divref}></div>
+        </div>
+        </div>
       </div>
-      <div>
+      <div className="relative w-full h-fit  row-auto">
       <MessageInput id={openChat?.currentUserDetails?.id} />
-      </div>
+      </div>  
     </section>
   );
 }

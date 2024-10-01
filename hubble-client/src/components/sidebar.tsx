@@ -9,7 +9,7 @@ function Sidebar() {
   const hover_btn_class =
     "hover:bg-slate-700 lg:p-3 py-1 px-3 rounded-md transition";
   return (
-    <section className=" absolute bottom-0 lg:top-0 lg:relative flex flex-row lg:flex-col items-center justify-between lg:p-2 p-3 lg:py-10 py-1 lg:w-auto w-screen h-auto bg-slate-800 z-40 text-white">
+    <section className=" relative bottom-0 lg:top-0 lg:relative flex flex-row lg:flex-col items-center justify-between lg:p-2 p-3 lg:py-10 py-1 lg:w-auto w-screen h-auto bg-slate-800 z-40 text-white">
       <div className="lg:w-full lg:block flex flex-row">
         <button
           type="button"

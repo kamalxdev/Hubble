@@ -48,13 +48,15 @@ export function SocketContextProvider({
   }, [openChat.currentUniqueUserId]);
   socket.onmessage = (message) => {
     try {
-      console.log("Message received:", message.data);
     listenMessages(openChat,socket,webRTC,JSON.parse(message.data))
     } catch (error) {
+      
       console.log("error on listening events");
       
     }
   };
+
+
   socket.onclose =()=>{
     alert("Failed to connect to server. Refresh and try again.");
     location.reload();

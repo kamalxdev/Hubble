@@ -9,31 +9,37 @@ function Calls() {
 
   const friends = call?.history;
   return (
-    <section className="bg-slate-900 h-screen" key={"message"}>
-      <SearchBar placeholder="Search calls" for="call" />
-
-      <div className="relative h-[79.5vh] lg:h-[93vh] overflow-y-scroll" key={"hell"}>
-        <div
-          className=" inline-flex flex-col justify-center w-full"
-          key={"friends"}
-        >
-          {friends.map((friend) => {
-            return (
-              <Fragment key={friend?.call?.id}>
-                <Friend
-                  name={friend?.user?.name}
-                  UniqueUserID={friend?.user?.id}
-                  key={friend?.user?.username}
-                  username={friend?.user?.username}
-                  type={friend?.call?.type}
-                  time={friend?.call?.createdAt}
-                  accepted={friend?.call?.answer}
-                  incoming={friend?.call?.incoming}
-                  avatar={friend?.user?.avatar}
-                />
-              </Fragment>
-            );
-          })}
+    <section
+      className="bg-slate-900 h-full grid grid-flow-row-dense"
+      key={"message"}
+    >
+      <div className="h-fit row-auto">
+        <SearchBar placeholder="Search calls" for="call" />
+      </div>
+      <div className="relative overflow-y-scroll" key={"hell"}>
+        <div className="h-[80vh] lg:h-[90vh]">
+          <div
+            className="absolute inline-flex flex-col justify-center w-full"
+            key={"friends"}
+          >
+            {friends.map((friend) => {
+              return (
+                <Fragment key={friend?.call?.id}>
+                  <Friend
+                    name={friend?.user?.name}
+                    UniqueUserID={friend?.user?.id}
+                    key={friend?.user?.username}
+                    username={friend?.user?.username}
+                    type={friend?.call?.type}
+                    time={friend?.call?.createdAt}
+                    accepted={friend?.call?.answer}
+                    incoming={friend?.call?.incoming}
+                    avatar={friend?.user?.avatar}
+                  />
+                </Fragment>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
@@ -48,7 +54,7 @@ type iFriendProps = {
   time: Date;
   accepted: Boolean;
   incoming: Boolean;
-  avatar : string | null
+  avatar: string | null;
 };
 
 const Friend = memo(function Friend(props: iFriendProps) {
@@ -60,7 +66,7 @@ const Friend = memo(function Friend(props: iFriendProps) {
       // onClick={() => {
       //   openChat?.setUniqueUserId(props.UniqueUserID);
       // }}
-      className={`inline-flex justify-start items-center gap-4 px-2 mx-5 text-white hover:bg-slate-600/50 transition rounded-md`}
+      className={`inline-flex justify-start items-center gap-4 lg:px-2 mx-5 text-white hover:bg-slate-600/50 transition rounded-md`}
     >
       <img
         src={
@@ -106,7 +112,7 @@ const Friend = memo(function Friend(props: iFriendProps) {
           </h3>
           <Dot size={20} className="text-slate-600" />
           {props.incoming ? (
-            <PhoneIncoming className="w-4"/>
+            <PhoneIncoming className="w-4" />
           ) : (
             <PhoneOutgoing className="w-4" />
           )}
