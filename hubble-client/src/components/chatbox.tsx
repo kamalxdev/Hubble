@@ -44,22 +44,15 @@ function ChatBox() {
         ...openChat?.allUserChats,
         [openChat?.currentUniqueUserId]: chatupdated,
       });      
-      const last_message=openChat?.allUserChats && openChat?.allUserChats[openChat?.currentUniqueUserId] && openChat?.allUserChats[openChat?.currentUniqueUserId][openChat?.allUserChats[openChat?.currentUniqueUserId]?.length - 1]
-      console.log(last_message);
       
-      if(last_message && last_message?.type=="sender" && last_message?.status=="unread"){
-        console.log("inside");
-        
         socket.send(
           JSON.stringify({
             event: "message-read",
             payload: {
               id: openChat?.currentUniqueUserId,
-              chat: last_message
             },
           })
         );
-      }
     }
   }, [openChat?.loading]);
   if (!openChat.currentUniqueUserId) {

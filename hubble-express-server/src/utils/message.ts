@@ -69,21 +69,16 @@ export async function message(data: { event: string; payload: any }, ws: iwebsoc
       //
       case "message-read":
         if (
-          data?.payload?.id &&
-          data?.payload?.chat?.message &&
-          data?.payload?.chat?.time
+          data?.payload?.id
         ) {
           updateReadChatsInDB(
             socketIdtoDBuserID.get(ws?.id),
-            data?.payload?.id,
-            data?.payload?.chat
-          );
+            data?.payload?.id);
           sendMessageToSpecific(
             {
               event: "message-read-recieved",
               payload: {
                 id: socketIdtoDBuserID.get(ws?.id),
-                chat: data?.payload?.chat,
               },
             },
             onlineUser.get(data?.payload?.id)

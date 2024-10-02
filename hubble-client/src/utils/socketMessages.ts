@@ -84,13 +84,12 @@ export async function listenMessages(
       //
       //
       case "message-read-recieved":
-        if (data?.payload?.id && data?.payload?.chat?.time) {
+        if (data?.payload?.id) {
           const chatupdated: icurrentUserChats[] =
             openChat?.allUserChats &&
             openChat?.allUserChats[openChat?.currentUniqueUserId]?.map(
               (chat) => {
                 if (
-                  new Date(chat?.time) <= new Date(data?.payload?.chat?.time) &&
                   chat?.type == "reciever" &&
                   chat?.status == "unread"
                 ) {

@@ -27,7 +27,7 @@ export function sendMessageToAll(data: any) {
     });
   }
   
-export async function updateReadChatsInDB(id: string, to: string, chats: any) {
+export async function updateReadChatsInDB(id: string, to: string) {
     try {
       const userchats = await prisma.user.findFirst({
         where: {
@@ -54,7 +54,6 @@ export async function updateReadChatsInDB(id: string, to: string, chats: any) {
       let updated_messages = (chats_on_DB?.messages as Prisma.JsonArray).map(
         (message: any) => {
           if (
-            new Date(message?.time) <= new Date(chats?.time) &&
             message?.status == "unread" && message?.to==id
           ) {
             return { ...message, status: "read" };
