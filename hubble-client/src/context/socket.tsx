@@ -4,7 +4,7 @@ import { OpenChatContext, iOpenChatValue } from "./OpenedChat";
 import { listenMessages } from "../utils/socketMessages";
 import { iwebRTCcontext, webRTCcontext } from "./webRTC";
 
-const socket = new WebSocket(
+var socket = new WebSocket(
   import.meta.env.VITE_SERVER_URL as string
 );
 
@@ -58,8 +58,18 @@ export function SocketContextProvider({
 
 
   socket.onclose =()=>{
-    alert("Failed to connect to server. Refresh and try again.");
-    location.reload();
+    console.log("Disconnected");
+    try {
+      setTimeout(()=>{
+        socket = new WebSocket(
+          import.meta.env.VITE_SERVER_URL as string
+        )
+      },1000)
+    } catch (error) {
+      alert("Cannot connect to server")
+      console.log("websocket connection failed: ",error);
+      
+    }
   }
   return (
     <socketContext.Provider value={socket}>{children}</socketContext.Provider>
