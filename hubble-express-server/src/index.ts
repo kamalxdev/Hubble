@@ -35,18 +35,8 @@ app.use("/api/v1/call", require("./routes/call"));
 
 
 
-startPrisma().then(()=>{
-    startRedis().then(async ()=>{
-        const allusers=await prisma.user.findMany({})
-        await client.set('users',JSON.stringify(allusers))
-        console.log("all user set");
-        const allchats=await prisma.chat.findMany({})
-        await client.set('chats',JSON.stringify(allchats))
-        console.log("all chats set");        
-    }).catch((err)=>{
-        console.log("Error on setting user to redis: ",err);
-    })
-})
+startPrisma();
+startRedis();
 
 var httpServer=app.listen(4000)
 export const wss = new WebSocketServer({ server:httpServer}) as iwebsocketServer;

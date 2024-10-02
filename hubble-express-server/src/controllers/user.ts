@@ -1,7 +1,6 @@
 import { PrismaClient, User } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Request, Response } from "express";
-import { client } from "../redis";
 import { deleteFile, upload } from "../utils/cloudinary";
 const prisma = new PrismaClient().$extends(withAccelerate());
 
@@ -59,13 +58,22 @@ export async function getUserSearchResult(req: Request, res: Response) {
   try {
     const query = req?.query?.q as string;
     if (!query) return res.json({ success: false });
-    const allUsers = await client.get("users");
-    const allUsersFiltered: User[] = JSON.parse(allUsers as string)?.filter(
-      (user: User) =>
-        user?.name?.toLowerCase().startsWith(query.toLowerCase()) ||
-        user?.username?.toLowerCase().startsWith(query.toLowerCase())
-    );
-    return res.json({ success: true, searchResult: allUsersFiltered });
+    const searchResult=await prisma.user.findMany({
+      where:{
+        OR:[
+          {name:{
+            contains:query,
+            mode: 'insensitive'
+          }},
+          
+          {username:{
+            startsWith:query,
+            mode: 'insensitive'
+          }}
+        ]
+      }
+    })
+    return res.json({ success: true, searchResult });
   } catch (error) {
     console.log("Error on getUserSearchResult: ", error);
 
