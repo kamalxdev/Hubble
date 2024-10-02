@@ -43,11 +43,13 @@ function ChatBox() {
       openChat?.setAllUserChats({
         ...openChat?.allUserChats,
         [openChat?.currentUniqueUserId]: chatupdated,
-      });
-  
+      });      
       const last_message=openChat?.allUserChats && openChat?.allUserChats[openChat?.currentUniqueUserId] && openChat?.allUserChats[openChat?.currentUniqueUserId][openChat?.allUserChats[openChat?.currentUniqueUserId]?.length - 1]
+      console.log(last_message);
+      
       if(last_message && last_message?.type=="sender" && last_message?.status=="unread"){
-
+        console.log("inside");
+        
         socket.send(
           JSON.stringify({
             event: "message-read",
@@ -73,12 +75,12 @@ function ChatBox() {
 
   let currentDate: Date;
   return (
-    <section className="relative w-full h-screen transition overflow-hidden bg-slate-950 grid grid-flow-row-dense	">
+    <section className="relative w-full h-full transition overflow-hidden bg-slate-950 grid grid-flow-row-dense">
       <div className="relative w-full h-fit ">
       <ChatTopBar />
       </div>
-      <div className="relative overflow-hidden overflow-y-scroll w-full h-full ">
-        <div className=" h-[85vh] ">
+      <div className="relative overflow-hidden overflow-y-scroll w-full h-full">
+        <div className=" h-[85dvh] ">
         <div className="absolute inline-flex flex-col gap-5 w-full py-5 px-3 overflow-hidden">
           {openChat?.currentUserChats?.map((chat, index) => {
             let chatDate = new Date(chat?.time);

@@ -17,12 +17,12 @@ function SearchBar(props: iSearchBarprops) {
   const getSearchresults = useGetData(`/user/search?q=${query}`, {}, true, [
     query,
   ]);
-
+  
   return (
-    <div className="relative flex justify-center w-full p-2 px-4 z-30 ">
-      <div className="relative w-full">
-        <div className=" inline-flex flex-col items-center bg-slate-700 p-3 text-white rounded-md z-30 w-full transition-all">
-          <div className="inline-flex items-center gap-2 w-full">
+    <div className="relative flex justify-center w-full h-full p-2 px-4 z-30 transition-all">
+      <div className="relative w-full h-full transition-all">
+        <div className="relative inline-flex flex-col items-center bg-slate-700 p-3 text-white rounded-md z-30 w-full h-full transition-all">
+          <div className=" inline-flex items-center gap-2 w-full h-full">
             <span>
               <Search size={16} />
             </span>
@@ -31,7 +31,7 @@ function SearchBar(props: iSearchBarprops) {
                 type="search"
                 onChange={(e) =>
                   setTimeout(
-                    () => e.target.value && setQuery(e.target.value),
+                    () => setQuery(e.target.value),
                     700
                   )
                 }
@@ -40,8 +40,10 @@ function SearchBar(props: iSearchBarprops) {
               />
             </span>
           </div>
-          {getSearchresults?.response?.success && query && (
-            <div className="inline-flex items-center flex-col w-full z-30 mt-3">
+          
+          
+          {query && getSearchresults?.response?.success && (
+            <div className=" inline-flex items-center flex-col w-full z-30 mt-3 transition-all">
               {getSearchresults?.response?.searchResult.length >= 1 ? (
                 getSearchresults?.response?.searchResult?.map((user: iUser) => {
                   return (

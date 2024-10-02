@@ -10,14 +10,14 @@ function Calls() {
   const friends = call?.history;
   return (
     <section
-      className="bg-slate-900 h-full grid grid-flow-row-dense"
+      className="relative bg-slate-900 w-full h-full grid grid-flow-row-dense auto-rows-max"
       key={"message"}
     >
-      <div className="h-fit row-auto">
+      <div className="relative h-fit">
         <SearchBar placeholder="Search calls" for="call" />
       </div>
-      <div className="relative overflow-y-scroll" key={"hell"}>
-        <div className="h-[80vh] lg:h-[90vh]">
+      <div className="relative overflow-hidden overflow-y-scroll h-full" key={"hell"}>
+        <div className="h-[82dvh] lg:h-[90vh]">
           <div
             className="absolute inline-flex flex-col justify-center w-full"
             key={"friends"}

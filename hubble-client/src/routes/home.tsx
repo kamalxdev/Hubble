@@ -31,28 +31,28 @@ export default function Home() {
         webRTC?.call?.Useris == "reciever" &&
         (webRTC?.call?.answered ? "" : <IncomingCall />)}
 
-      <div className="transition flex flex-col-reverse lg:flex-row w-full h-screen">
+      <div className=" transition flex flex-col-reverse lg:flex-row w-full h-dvh lg:h-screen ">
         <Sidebar />
-        <div className="lg:grid lg:grid-cols-3 w-full h-full bg-slate-950">
+        <div className=" lg:grid lg:grid-cols-3 w-full h-full bg-slate-950">
           {(webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
             (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered) ||
             (toggle.sidebar == "calls" && (
               <>
-                <section className="transition-all shadow-xl z-30">
+                <section className="absolute lg:relative w-full transition-all shadow-xl z-30 h-full">
                   <Calls />
                 </section>
               </>
             ))}
           {toggle.sidebar == "chats" && (
             <>
-              <section className="transition-all z-30">
+              <section className="absolute lg:relative w-full transition-all z-30 h-full">
                 <Messages key={"messages"} />
               </section>
             </>
           )}
           {toggle.sidebar == "profile" && (
             <>
-              <section className="w-full h-screen transition-all z-50 bg-slate-900 py-10 flex flex-col gap-5">
+              <section className="w-full h-full transition-all z-50 bg-slate-900 py-10 flex flex-col gap-5">
                 <Avatar />
                 <Profile />
               </section>
@@ -61,7 +61,7 @@ export default function Home() {
           {(webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
           (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered) ? (
             <section
-              className={`w-full h-screen transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
+              className={`w-full h-full transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
                 (webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
                 (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered)
                   ? "block"
@@ -72,7 +72,7 @@ export default function Home() {
             </section>
           ) : (
             <section
-              className={` w-full h-screen transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
+              className={` w-full h-full transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
                 openChat?.currentUniqueUserId ? "block" : "hidden"
               }`}
             >

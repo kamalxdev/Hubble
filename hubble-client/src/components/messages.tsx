@@ -14,13 +14,13 @@ function Messages() {
  const friends = user?.friends as iUser[];
  
   return (
-    <section className="bg-slate-900 h-full grid grid-flow-row-dense" key={"message"}>
-      <div className="h-fit  row-auto">
+    <section className="relative bg-slate-900 h-full grid grid-flow-row-dense auto-rows-max" key={"message"}>
+      <div className=" h-fit ">
       <SearchBar placeholder="Search users" for="user" />
 
       </div>
-      <div className="relative overflow-y-scroll " key={"hell"}>
-      <div className="h-[80vh] lg:h-[90vh]">
+      <div className="relative overflow-y-scroll h-full " key={"hell"}>
+      <div className="h-[82dvh] lg:h-[90vh]">
 
         <div
           className="absolute inline-flex flex-col justify-center w-full"
