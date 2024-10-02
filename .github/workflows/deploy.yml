@@ -44,6 +44,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hubble-server:latest
-            sudo docker stop hubble-server || true
-            sudo docker rm hubble-server || true
-            sudo docker run -d --name hubble-server -p 4000:4000 -e "CLIENT_URL=${{ secrets.CLIENT_URL }}" -e "DATABASE_URL= ${{ secrets.DATABASE_URL }}" -e "JWT_SECRET=${{ secrets.JWT_SECRET }}" -e "COOKIE_HTTPONLY=true" -e "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" -e "REDIS_HOST=${{ secrets.REDIS_HOST }}" -e "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" -e "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" -e "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" -e "EMAIL_ID=${{ secrets.EMAIL_ID }}" -e "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" -e "EMAIL_SMTP=${{ secrets.EMAIL_SMTP }}" -e "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" ${{ secrets.DOCKER_USERNAME }}/hubble-server:latest
+            sudo docker stop hubble-backend || true
+            sudo docker rm hubble-backend || true
+            sudo docker run -d --name hubble-backend -p 4000:4000 -e "CLIENT_URL=${{ secrets.CLIENT_URL }}" -e "DATABASE_URL= ${{ secrets.DATABASE_URL }}" -e "JWT_SECRET=${{ secrets.JWT_SECRET }}" -e "COOKIE_HTTPONLY=true" -e "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" -e "REDIS_HOST=${{ secrets.REDIS_HOST }}" -e "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" -e "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" -e "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" -e "EMAIL_ID=${{ secrets.EMAIL_ID }}" -e "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" -e "EMAIL_SMTP=${{ secrets.EMAIL_SMTP }}" -e "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" ${{ secrets.DOCKER_USERNAME }}/hubble-server:latest
