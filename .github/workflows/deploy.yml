@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'hubble-express-server/**'
+      - '.github/**'
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
