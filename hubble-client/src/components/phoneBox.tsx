@@ -168,11 +168,11 @@ const VideoCall = memo(function VideoCall(props: { video: boolean }) {
   }, [webRTC?.peer?.reciever?.getTransceivers()[1]?.receiver?.track, webRTC?.peer?.reciever?.getTransceivers()[0]?.receiver?.track]);
   return (
     <div className="w-full h-full">
-      <div className="w-full h-full object-contain">
+      <div className="w-full h-full object-contain flex items-center justify-center">
         <video
           autoPlay
           ref={another_user_video}
-          className="rounded-md object-contain"
+          className="absolute rounded-md w-full h-full"
         ></video>
         <audio ref={another_user_mic} className="hidden" autoPlay></audio>
       </div>
