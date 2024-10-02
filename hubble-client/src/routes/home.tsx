@@ -61,7 +61,7 @@ export default function Home() {
           {(webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
           (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered) ? (
             <section
-              className={`w-full h-full transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
+              className={`w-full h-full lg:h-screen transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
                 (webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
                 (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered)
                   ? "block"

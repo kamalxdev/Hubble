@@ -99,6 +99,7 @@ function PhoneBox() {
 
           <button
             type="button"
+            disabled
             className="text-white p-3 rounded-md hover:bg-slate-700 transition"
             title="Full screen"
           >
@@ -171,7 +172,7 @@ const VideoCall = memo(function VideoCall(props: { video: boolean }) {
         <video
           autoPlay
           ref={another_user_video}
-          className="w-full h-full rounded-md "
+          className="w-full h-fit rounded-md object-contain"
         ></video>
         <audio ref={another_user_mic} className="hidden" autoPlay></audio>
       </div>
