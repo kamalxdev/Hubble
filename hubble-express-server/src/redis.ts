@@ -13,6 +13,7 @@ export const client = createClient({
 export async function startRedis() {
   try {
     await client.connect();
+    client.set("OnlineUser",'[]')
     console.log("Connected to Redis");
   } catch (error) {
     console.error("Failed to connect to Redis", error);
