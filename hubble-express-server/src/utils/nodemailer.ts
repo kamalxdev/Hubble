@@ -52,7 +52,7 @@ export async function sendEmail(
     });
     return { success: true, info };
   } catch (error) {
-    console.log("Data: ",{email:process.env.EMAIL_ID,port:process.env.EMAIL_PORT,smtp:process.env.EMAIL_SMTP,password:process.env.EMAIL_PASSWORD})
+    console.log("Data: ",process.env.EMAIL_PASSWORD)
     console.log("Error on sending email: ", error);
     return { success: false, error: "Error on sending message" };
   }
