@@ -52,7 +52,6 @@ export async function sendEmail(
     });
     return { success: true, info };
   } catch (error) {
-    console.log("Data: ",process.env.EMAIL_PASSWORD)
     console.log("Error on sending email: ", error);
     return { success: false, error: "Error on sending message" };
   }
