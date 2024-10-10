@@ -71,6 +71,11 @@ export async function getUserSearchResult(req: Request, res: Response) {
             mode: 'insensitive'
           }}
         ]
+      },select:{
+        name:true,
+        avatar:true,
+        id:true,
+        username:true
       }
     })
     return res.json({ success: true, searchResult });
@@ -84,8 +89,8 @@ export async function getUserSearchResult(req: Request, res: Response) {
 export async function getUserFriends(req: Request, res: Response) {
   try {
     const user = res.locals.user;
-    const friendsID=Object.entries(user?.myChats).map((u)=>{return {id:u[0]}})
-    const friends=await prisma.user.findMany({
+    const friendsID=user?.myChats && Object.entries(user?.myChats)?.map((u)=>{return {id:u[0]}})
+    const friends=friendsID && await prisma.user.findMany({
       where: {
         OR:friendsID
       },select:{

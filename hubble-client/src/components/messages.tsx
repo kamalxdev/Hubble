@@ -26,8 +26,8 @@ function Messages() {
           className="absolute inline-flex flex-col justify-center w-full"
           key={"friends"}
         >
-          {friends.length >= 1 ? (
-            friends.map((friend) => (
+          {friends?.length >= 1 ? (
+            friends?.map((friend) => (
               <Fragment key={friend?.id}>
                 <Friend
                   name={friend?.name}
