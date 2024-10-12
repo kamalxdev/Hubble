@@ -24,7 +24,7 @@ function SearchBar(props: iSearchBarprops) {
         <div className="relative inline-flex flex-col items-center bg-slate-700 p-3 text-white rounded-md z-30 w-full h-full transition-all">
           <div className=" inline-flex items-center gap-2 w-full h-full">
             <span>
-              <Search size={16} />
+              <Search size={16}/>
             </span>
             <span className="w-full">
               <input

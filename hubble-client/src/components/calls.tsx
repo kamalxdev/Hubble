@@ -3,6 +3,7 @@ import { Fragment, memo, useContext } from "react";
 // import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
 import SearchBar from "./searchBar";
 import { callContext, iCallContext } from "../context/calls";
+import Sidebar from "./sidebar";
 
 function Calls() {
   const call = useContext(callContext) as iCallContext;
@@ -10,16 +11,19 @@ function Calls() {
   const friends = call?.history;
   return (
     <section
-      className="relative bg-slate-900 w-full h-full grid grid-flow-row-dense auto-rows-max"
+      className="relative bg-slate-950 w-full h-full overflow-hidden grid grid-rows-[auto_1fr_auto] transition"
       key={"message"}
     >
-      <div className="relative h-fit">
+      <div className="relative w-full h-fit ">
         <SearchBar placeholder="Search calls" for="call" />
       </div>
-      <div className="relative overflow-hidden overflow-y-scroll h-full" key={"hell"}>
-        <div className="h-[82dvh] lg:h-[90vh]">
+      <div
+        className=" overflow-hidden overflow-y-scroll h-full w-full "
+        key={"hell"}
+      >
+        <div className="relative">
           <div
-            className="absolute inline-flex flex-col justify-center w-full"
+            className="absolute inline-flex flex-col justify-center w-full overflow-hidden"
             key={"friends"}
           >
             {friends.map((friend) => {
@@ -41,6 +45,9 @@ function Calls() {
             })}
           </div>
         </div>
+      </div>
+      <div className="relative w-full h-fit ">
+        <Sidebar />
       </div>
     </section>
   );
@@ -80,11 +87,11 @@ const Friend = memo(function Friend(props: iFriendProps) {
         className="flex flex-row justify-between w-full border-y p-2 border-slate-800 "
         key={"user_details"}
       >
-        <span className="flex flex-col  items-start">
+        <span className="flex flex-col items-start">
           <h1>{props.name}</h1>
 
           <span className="flex text-slate-400">
-            <p className="lg:text-[0.70rem] xl:text-xs text-[0.65rem]">
+            <p className="lg:text-[0.50rem] xl:text-xs text-[0.65rem] text-wrap">
               {new Date().toLocaleDateString() ==
               new Date(props?.time).toLocaleDateString()
                 ? "Today at " +

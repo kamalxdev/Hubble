@@ -7,39 +7,39 @@ function Sidebar() {
   const user = useContext(currentUser) as iCurrentUserContext;
   const toggle = useContext(toggleContext) as iToggleContext;
   const hover_btn_class =
-    "hover:bg-slate-700 lg:p-3 py-1 px-3 rounded-md transition";
+    "hover:bg-slate-700 py-2 px-3 rounded-md transition flex flex-col items-center justify-center gap-2";
   return (
-    <section className="relative bottom-0 lg:top-0 lg:relative flex flex-row lg:flex-col items-center justify-between lg:p-2 p-3 lg:py-10 py-1 lg:w-auto w-screen h-auto bg-slate-800 z-40 text-white">
-      <div className="lg:w-full lg:block flex flex-row">
+    <section className=" flex flex-row items-center justify-between py-2 px-4 lg:w-full w-screen bg-slate-950 z-40 text-white ">
+      <div className="flex flex-row gap-2">
         <button
           type="button"
-          className="w-full p-2"
+          className={hover_btn_class }
           onClick={() => toggle?.setSidebar("profile")}
         >
           <img
             src={user?.user?.avatar ? user?.user?.avatar:
               import.meta.env.VITE_DEFAULT_AVATAR_URL
             }
-            className="flex justify-center items-center border rounded-full w-11"
-          />
+            className="flex justify-center items-center border rounded-full w-6"
+          /> <p className="opacity-50 font-semibold text-sm">Profile</p>
         </button>
 
-        <div className="flex flex-row lg:flex-col lg:mt-5 gap-2">
+        <div className="flex flex-row gap-2">
           <button
             type="button"
             title="Chat"
-            className={hover_btn_class}
+            className={ `${toggle?.sidebar=="chats" && "bg-slate-800"} + ${hover_btn_class}`}
             onClick={() => toggle?.setSidebar("chats")}
           >
-            <Chat size={28} className="relative" />
+            <Chat size={24} className="relative" /><p className="opacity-50 font-semibold text-sm">Chats</p>
           </button>
           <button
             type="button"
             title="Calls"
-            className={hover_btn_class}
+            className={ `${toggle?.sidebar=="calls" && "bg-slate-800"} + ${hover_btn_class}`}
             onClick={() => toggle?.setSidebar("calls")}
           >
-            <Phone size={28} className="relative" />
+            <Phone size={24} className="relative" /><p className="opacity-50 font-semibold text-sm">Calls</p>
           </button>
           {/* <button
             type="button"

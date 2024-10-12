@@ -1,10 +1,4 @@
-import {
-  ArrowLeft,
-  CheckCheck,
-  Phone,
-  Send,
-  Video,
-} from "lucide-react";
+import { ArrowLeft, CheckCheck, Phone, Send, Video } from "lucide-react";
 import { memo, useContext, useEffect, useRef, useState } from "react";
 import {
   icurrentUserChats,
@@ -43,16 +37,16 @@ function ChatBox() {
       openChat?.setAllUserChats({
         ...openChat?.allUserChats,
         [openChat?.currentUniqueUserId]: chatupdated,
-      });      
-      
-        socket.send(
-          JSON.stringify({
-            event: "message-read",
-            payload: {
-              id: openChat?.currentUniqueUserId,
-            },
-          })
-        );
+      });
+
+      socket.send(
+        JSON.stringify({
+          event: "message-read",
+          payload: {
+            id: openChat?.currentUniqueUserId,
+          },
+        })
+      );
     }
   }, [openChat?.loading]);
   if (!openChat.currentUniqueUserId) {
@@ -68,63 +62,65 @@ function ChatBox() {
 
   let currentDate: Date;
   return (
-    <section className="relative w-full h-full transition overflow-hidden bg-slate-950 grid grid-flow-row-dense">
-      <div className="relative w-full h-fit ">
-      <ChatTopBar />
-      </div>
-      <div className="relative overflow-hidden overflow-y-scroll w-full h-full">
-        <div className=" h-[85dvh] ">
-        <div className="absolute inline-flex flex-col gap-5 w-full py-5 px-3 overflow-hidden">
-          {openChat?.currentUserChats?.map((chat, index) => {
-            let chatDate = new Date(chat?.time);
+    <section className="w-full h-full lg:absolute lg:p-5 lg:pl-2 ">
+      <section className="relative w-full h-full transition overflow-hidden bg-slate-900 grid grid-rows-[auto_1fr_auto] lg:rounded-md shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)]">
+        <div className="relative w-full h-fit ">
+          <ChatTopBar />
+        </div>
+        <div className="relative overflow-hidden overflow-y-scroll w-full h-full">
+          <div className=" h-[85dvh] ">
+            <div className="absolute inline-flex flex-col gap-5 w-full py-5 px-3 overflow-hidden">
+              {openChat?.currentUserChats?.map((chat, index) => {
+                let chatDate = new Date(chat?.time);
 
-            if (!currentDate) {
-              currentDate = chatDate;
-              return (
-                <Chat
-                  from={chat.type as "sender" | "reciever"}
-                  key={index}
-                  message={chat.message}
-                  time={chatDate}
-                  status={chat.status}
-                  showDate
-                />
-              );
-            } else if (
-              currentDate?.getDate() != chatDate?.getDate() ||
-              currentDate?.getMonth() != chatDate?.getMonth() ||
-              currentDate?.getFullYear() != chatDate?.getFullYear()
-            ) {
-              currentDate = chatDate;
-              return (
-                <Chat
-                  from={chat.type as "sender" | "reciever"}
-                  key={index}
-                  message={chat.message}
-                  time={chatDate}
-                  status={chat.status}
-                  showDate
-                />
-              );
-            } else {
-              return (
-                <Chat
-                  from={chat.type as "sender" | "reciever"}
-                  key={index}
-                  message={chat.message}
-                  status={chat.status}
-                  time={chatDate}
-                />
-              );
-            }
-          })}
-        <div ref={divref}></div>
+                if (!currentDate) {
+                  currentDate = chatDate;
+                  return (
+                    <Chat
+                      from={chat.type as "sender" | "reciever"}
+                      key={index}
+                      message={chat.message}
+                      time={chatDate}
+                      status={chat.status}
+                      showDate
+                    />
+                  );
+                } else if (
+                  currentDate?.getDate() != chatDate?.getDate() ||
+                  currentDate?.getMonth() != chatDate?.getMonth() ||
+                  currentDate?.getFullYear() != chatDate?.getFullYear()
+                ) {
+                  currentDate = chatDate;
+                  return (
+                    <Chat
+                      from={chat.type as "sender" | "reciever"}
+                      key={index}
+                      message={chat.message}
+                      time={chatDate}
+                      status={chat.status}
+                      showDate
+                    />
+                  );
+                } else {
+                  return (
+                    <Chat
+                      from={chat.type as "sender" | "reciever"}
+                      key={index}
+                      message={chat.message}
+                      status={chat.status}
+                      time={chatDate}
+                    />
+                  );
+                }
+              })}
+              <div ref={divref}></div>
+            </div>
+          </div>
         </div>
+        <div className="relative w-full h-fit  row-auto">
+          <MessageInput id={openChat?.currentUserDetails?.id} />
         </div>
-      </div>
-      <div className="relative w-full h-fit  row-auto">
-      <MessageInput id={openChat?.currentUserDetails?.id} />
-      </div>  
+      </section>
     </section>
   );
 }
@@ -133,10 +129,10 @@ const ChatTopBar = memo(function ChatTopBar() {
   const openChat = useContext(OpenChatContext) as iOpenChatValue;
   const webRTC = useContext(webRTCcontext) as iwebRTCcontext;
   const socket = useContext(socketContext) as WebSocket;
-  
+
   function handleCreateCall(type: string) {
     navigator.mediaDevices
-      .getUserMedia({ video: type=="video", audio: true })
+      .getUserMedia({ video: type == "video", audio: true })
       .then(() => {
         webRTC?.setCall({
           ...webRTC?.call,
@@ -153,43 +149,49 @@ const ChatTopBar = memo(function ChatTopBar() {
         );
       });
   }
-  const topBarLeftStyling = "hover:bg-slate-700 transition lg:p-3 p-2 rounded-md ";
+  const topBarLeftStyling =
+    "hover:bg-slate-700 transition lg:p-3 p-2 rounded-md ";
   return (
     <div className="flex w-full top-0 justify-between items-center bg-slate-800 lg:px-10 px-2 py-2 text-white">
       <span className="flex gap-2">
-
-      <button type="button" className={`block  lg:hidden ${topBarLeftStyling}`} onClick={()=>openChat.setUniqueUserId('')}><ArrowLeft size={20}/></button>
-      <Link
-        to={"/"}
-        className="inline-flex  justify-center items-center gap-3 p-2 rounded-md hover:bg-slate-700 transition"
+        <button
+          type="button"
+          className={`block  lg:hidden ${topBarLeftStyling}`}
+          onClick={() => openChat.setUniqueUserId("")}
         >
-        <img
-        src={
-          openChat.currentUserDetails?.avatar
-            ? openChat.currentUserDetails?.avatar
-            : import.meta.env.VITE_DEFAULT_AVATAR_URL
-        }
-        className="flex justify-center items-center border rounded-full w-9"
-      />
-        <span className="flex flex-col transition-all">
-          <span className="transition-all flex justify-center items-center gap-2">
-            <h1 className="text-base">{openChat.currentUserDetails?.name}</h1>
-            {openChat?.currentUserOnline && (
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-              </span>
-            )}
-          </span>
-          {openChat?.typing &&
-            openChat?.typing[openChat?.currentUniqueUserId] && (
-              <h6 className="text-xs text-green-500 font-semibold transition-all">
-                typing...
-              </h6>
-            )}
-        </span>
-      </Link>
+          <ArrowLeft size={20} />
+        </button>
+        <Link
+          to={"/"}
+          className="inline-flex  justify-center items-center gap-3 p-2 rounded-md hover:bg-slate-700 transition"
+        >
+          <img
+            src={
+              openChat.currentUserDetails?.avatar
+                ? openChat.currentUserDetails?.avatar
+                : import.meta.env.VITE_DEFAULT_AVATAR_URL
+            }
+            className="flex justify-center items-center border rounded-full w-9"
+          />
+          <span className="flex flex-col transition-all">
+            <span className="transition-all flex justify-center items-center gap-2">
+              <h1 className="text-base">{openChat.currentUserDetails?.name}</h1>
+              {openChat?.currentUserOnline && (
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+              )}
             </span>
+            {openChat?.typing &&
+              openChat?.typing[openChat?.currentUniqueUserId] && (
+                <h6 className="text-xs text-green-500 font-semibold transition-all">
+                  typing...
+                </h6>
+              )}
+          </span>
+        </Link>
+      </span>
       <span className="flex gap-2">
         <button
           type="button"
@@ -220,6 +222,8 @@ const MessageInput = memo(function MessageInput({ id }: { id: string }) {
   const [message, setMessage] = useState("");
   function handleSendMessage() {
     let time = new Date();
+    // if(openChat?.setAllUserChats)
+
     if (!message) return;
     socket.send(
       JSON.stringify({
@@ -306,10 +310,10 @@ const Chat = memo(function Chat(props: iChatProps) {
         </div>
       )}
       <div
-        className={`inline-flex flex-col w-fit max-w-md md:max-w-xl px-3 rounded-md ${
+        className={`inline-flex flex-col w-fit max-w-md md:max-w-xl px-3 rounded-lg ${
           props.from == "sender"
-            ? "text-black bg-white"
-            : "text-white bg-slate-700 ml-auto"
+            ? "text-white bg-slate-700 rounded-bl-none"
+            : "text-white bg-blue-950 ml-auto rounded-br-none"
         }`}
       >
         <span

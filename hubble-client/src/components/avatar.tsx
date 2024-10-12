@@ -55,7 +55,7 @@ export default function Avatar() {
     }
   }
   return (
-    <section className="w-full flex flex-col gap-4 justify-center items-center bg-slate-900">
+    <section className="w-full flex flex-col gap-4 justify-center items-center bg-slate-950">
       <span className="flex justify-center items-center border rounded-full w-44 h-44 bg-white overflow-hidden">
         <img
           src={
