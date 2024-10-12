@@ -33,30 +33,24 @@ export default function Home() {
 
       <div className=" transition flex flex-col-reverse lg:flex-row w-full h-dvh lg:h-screen ">
         <div className=" lg:grid lg:grid-cols-3 w-full h-full bg-slate-950">
-          {(webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
-            (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered) ||
-            (toggle.sidebar == "calls" && (
-              <>
-                <section className="absolute lg:relative w-full transition-all shadow-xl z-30 h-full">
+          {(toggle.sidebar == "calls" && (
+                <section className="absolute lg:relative w-full transition-all z-30 h-full">
                   <Calls />
                 </section>
-              </>
             ))}
           {toggle.sidebar == "chats" && (
-            <>
               <section className="absolute lg:relative w-full transition-all z-30 h-full">
                 <Messages key={"messages"} />
               </section>
-            </>
           )}
           {toggle.sidebar == "profile" && (
-            <>
+            
               <section className="w-full h-full transition-all z-50 lg:z-30 bg-slate-950 py-10 flex flex-col gap-5 overflow-y-scroll">
                 <div className="w-full flex justify-end">
                   <button
                     type="button"
                     title="Close"
-                    className="p-2 mr-2 text-white opacity-70 transition-all hover:text-black hover:bg-red-500"
+                    className="p-2 mr-2 text-white opacity-70 transition-all hover:text-black hover:bg-red-500 rounded-full"
                     onClick={() => toggle.setSidebar("chats")}
                   >
                     <X />
@@ -65,12 +59,11 @@ export default function Home() {
                 <Avatar />
                 <Profile />
               </section>
-            </>
           )}
           {(webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
           (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered) ? (
             <section
-              className={`w-full h-full lg:h-screen transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
+              className={`w-full h-full transition-all absolute top-0 lg:relative col-span-2 z-40 lg:block ${
                 (webRTC?.call?.user?.id && webRTC?.call?.Useris == "sender") ||
                 (webRTC?.call?.Useris == "reciever" && webRTC?.call?.answered)
                   ? "block"

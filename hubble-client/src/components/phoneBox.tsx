@@ -62,14 +62,15 @@ function PhoneBox() {
     );
   }
   return (
-    <div className=" border-red-500 w-full h-full bg-slate-950 top-0">
+    <section className="lg:absolute lg:p-5 lg:pl-2 w-full h-full">
+    <div className="relative  w-full h-full bg-slate-900 top-0 rounded-md ">
       {webRTC?.call?.type == "video" ? (
         <VideoCall video={togglebtn?.video} />
       ) : (
         <VoiceCall />
       )}
       <div className="absolute w-full h-full top-0 z-40 flex flex-col items-center justify-end lg:pb-5">
-        <div className="bg-slate-800 justify-around flex lg:gap-3 w-full lg:w-auto pr-7 pl-5 py-2 lg:rounded-md">
+        <div className="bg-slate-950 justify-around flex lg:gap-3 w-full lg:w-auto pr-7 pl-5 py-2 lg:rounded-md">
           <button
             type="button"
             className={`text-white p-3 rounded-md  transition ${
@@ -116,6 +117,7 @@ function PhoneBox() {
         </div>
       </div>
     </div>
+    </section>
   );
 }
 
