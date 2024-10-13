@@ -1,7 +1,6 @@
 import { Dot, PhoneIncoming, PhoneOutgoing } from "lucide-react";
 import { Fragment, memo, useContext } from "react";
 // import { iOpenChatValue, OpenChatContext } from "../context/OpenedChat";
-import SearchBar from "./searchBar";
 import { callContext, iCallContext } from "../context/calls";
 import Sidebar from "./sidebar";
 
@@ -14,8 +13,8 @@ function Calls() {
       className="relative bg-slate-950 w-full h-full overflow-hidden grid grid-rows-[auto_1fr_auto] transition"
       key={"message"}
     >
-      <div className="relative w-full h-fit ">
-        <SearchBar placeholder="Search calls" for="call" />
+      <div className="relative w-full h-fit flex py-3 px-7 font-semibold">
+        <h1 className="text-2xl text-white opacity-70">Calls</h1>
       </div>
       <div
         className=" overflow-hidden overflow-y-scroll h-full w-full "
