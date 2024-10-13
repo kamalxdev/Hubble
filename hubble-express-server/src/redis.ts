@@ -3,13 +3,11 @@ import { createClient } from "redis";
 configDotenv();
 
 export const client = createClient({
-  password: process.env.REDIS_PASSWORD,
-  socket: {
-    host: process.env.REDIS_HOST,
-    port: 19733,
-  },
-});
-
+  socket:{
+    host:process.env.REDIS_HOST,
+    port:parseInt(process.env.REDIS_PORT as string)
+  }
+})
 export async function startRedis() {
   try {
     await client.connect();

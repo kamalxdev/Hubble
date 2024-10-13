@@ -44,7 +44,20 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            # Pull the latest application image
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/hubble-server:latest
+            
+            # Pull the latest Redis image
+            sudo docker pull redis:alpine
+            
+            # Stop and remove existing containers
             sudo docker stop hubble-backend || true
             sudo docker rm hubble-backend || true
-            sudo docker run -d --name hubble-backend -p 4000:4000 -e "CLIENT_URL=${{ secrets.CLIENT_URL }}" -e "DATABASE_URL= ${{ secrets.DATABASE_URL }}" -e "JWT_SECRET=${{ secrets.JWT_SECRET }}" -e "COOKIE_HTTPONLY=true" -e "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" -e "REDIS_HOST=${{ secrets.REDIS_HOST }}" -e "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" -e "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" -e "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" -e "EMAIL_ID=${{ secrets.EMAIL_ID }}" -e "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" -e "EMAIL_SMTP=${{ secrets.EMAIL_SMTP }}" -e "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" ${{ secrets.DOCKER_USERNAME }}/hubble-server:latest
+            sudo docker stop redis-container || true
+            sudo docker rm redis-container || true
+
+            # Run Redis container
+            sudo docker run -d --name redis-container -p ${{ secrets.REDIS_PORT }}:6379 redis:alpine
+
+            # Run application server container
+            sudo docker run -d --name hubble-backend -p 4000:4000 -e "CLIENT_URL=${{ secrets.CLIENT_URL }}" -e "DATABASE_URL= ${{ secrets.DATABASE_URL }}" -e "JWT_SECRET=${{ secrets.JWT_SECRET }}" -e "COOKIE_HTTPONLY=true" -e "REDIS_PORT=${{ secrets.REDIS_PORT }}" -e "REDIS_HOST=${{ secrets.REDIS_HOST }}" -e "CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}" -e "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" -e "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" -e "EMAIL_ID=${{ secrets.EMAIL_ID }}" -e "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" -e "EMAIL_SMTP=${{ secrets.EMAIL_SMTP }}" -e "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" ${{ secrets.DOCKER_USERNAME }}/hubble-server:latest

@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "4000:4000"
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      CLIENT_URL: ${CLIENT_URL}
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_HTTPONLY: true
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      EMAIL_ID: ${EMAIL_ID}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      EMAIL_SMTP: ${EMAIL_SMTP}
+      EMAIL_PORT: ${EMAIL_PORT}
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
